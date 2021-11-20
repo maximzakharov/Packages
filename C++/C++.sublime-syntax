@@ -329,6 +329,13 @@ contexts:
     - include: scope:source.c#label
     - include: expressions
 
+  statements-enum:
+    - include: preprocessor-statements
+    - include: scope:source.c#label
+    - match: '{{identifier}}'
+      scope: entity.name.enum.c++.constants
+    - include: expressions
+
   expressions:
     - include: early-expressions
     - include: late-expressions
@@ -851,6 +858,10 @@ contexts:
           push: data-structures
         - include: expressions-minus-generic-type
 
+    - match: \benum\b
+      scope: storage.type.c++
+      set: data-structures-enum-definition
+
   parens:
     - match: \(
       scope: punctuation.section.group.begin.c++
@@ -1268,7 +1279,7 @@ contexts:
         - match: '\}'
           scope: meta.enum.c++ meta.block.c++ punctuation.section.block.end.c++
           pop: true
-        - include: statements
+        - include: statements-enum
 
   data-structures-union-definition:
     - meta_scope: meta.union.c++
