@@ -53,12 +53,16 @@
 # lines, for example to trim whitespace and comments, may be unexpectedly
 # interrupted by sibling rules with $.
 
-
-
+name: Go
+scope: source.go
 
 file_extensions:
   - go
-scope: source.go
+
+first_line_match: |-
+  (?xi:
+    ^ \s* // .*? -\*- .*? \bgo(lang)?\b .*? -\*-  # editorconfig
+  )
 
 variables:
   # https://golang.org/ref/spec#Keywords
@@ -282,7 +286,7 @@ contexts:
         - match: \b_\b
           scope: variable.language.blank.go
         - match: '{{ident}}'
-          scope: variable.declaration.go
+          scope: variable.other.readwrite.declaration.go
         - include: match-comma
         - include: pop-before-nonblank
 
@@ -798,13 +802,13 @@ contexts:
             - match: \b_\b(?={{noise}},)
               scope: variable.language.blank.go
             - match: '{{ident}}(?={{noise}},)'
-              scope: variable.declaration.go
+              scope: variable.other.readwrite.declaration.go
 
             - match: \b_\b
               scope: variable.language.blank.go
               push: pop-var-type-and-or-assignment
             - match: '{{ident}}'
-              scope: variable.declaration.go
+              scope: variable.other.readwrite.declaration.go
               push: pop-var-type-and-or-assignment
 
             - include: match-any
@@ -815,13 +819,13 @@ contexts:
         - match: \b_\b(?={{noise}},)
           scope: variable.language.blank.go
         - match: '{{ident}}(?={{noise}},)'
-          scope: variable.declaration.go
+          scope: variable.other.readwrite.declaration.go
 
         - match: \b_\b
           scope: variable.language.blank.go
           set: pop-var-type-and-or-assignment
         - match: '{{ident}}'
-          scope: variable.declaration.go
+          scope: variable.other.readwrite.declaration.go
           set: pop-var-type-and-or-assignment
 
         - include: pop-before-nonblank
