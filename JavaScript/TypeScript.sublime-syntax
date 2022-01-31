@@ -155,9 +155,20 @@ contexts:
       set:
         - import-meta
         - expect-semicolon
+        - import-assert
         - import-string-or-items
         - ts-import-type
         - import-check-branch
+
+  import-brace:
+    - meta_prepend: true
+    - match: type{{identifier_break}}
+      scope: keyword.control.import-export.ts
+
+  export-brace:
+    - meta_prepend: true
+    - match: type{{identifier_break}}
+      scope: keyword.control.import-export.ts
 
   property-access:
     - meta_prepend: true
