@@ -14,7 +14,7 @@ file_extensions:
 
 first_line_match: |-
   (?xi:
-    ^ \#! .* \brunhaskell\b                     # shebang
+    ^ \#! .* \b(cabal|runhaskell|stack)\b       # shebang
   | ^ \s* -- .*? -\*- .*? \bhaskell\b .*? -\*-  # editorconfig
   )
 
@@ -93,10 +93,10 @@ variables:
   pragma_directives: |-
     (?x:
     # https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/pragmas.html
-      LANGUAGE | OPTIONS_GHC | OPTIONS_HADDOCK | INCLUDE | WARNING | DEPRECATED
-    | MINIMAL | INLINE | NOINLINE | INLINABLE | CONLIKE | LINE | COLUMN | RULES
-    | SPECIALIZE | UNPACK | NOUNPACK | SOURCE | COMPLETE | OVERLAPPING
-    | OVERLAPPABLE | OVERLAPS | INCOHERENT | CTYPE
+      LANGUAGE | OPTIONS | OPTIONS_GHC | OPTIONS_HADDOCK | INCLUDE | WARNING
+    | DEPRECATED | MINIMAL | INLINE | NOINLINE | INLINABLE | CONLIKE | LINE
+    | COLUMN | RULES | SPECIALIZE | UNPACK | NOUNPACK | SOURCE | COMPLETE
+    | OVERLAPPING | OVERLAPPABLE | OVERLAPS | INCOHERENT | CTYPE
     # https://ghc.gitlab.haskell.org/ghc/doc/users_guide/profiling.html
     | CORE | GENERATED | SCC
     ){{break}}
@@ -219,6 +219,11 @@ contexts:
     - include: preprocessor-directives
 
   main:
+    - meta_include_prototype: false
+    - match: ''
+      push: [haskell, shebang]
+
+  haskell:
     - include: modules
     - include: declarations
     - include: statements
@@ -290,6 +295,21 @@ contexts:
       captures:
         1: punctuation.definition.comment.haskell
 
+  shebang:
+    - match: ^\#!
+      scope: punctuation.definition.comment.haskell
+      set: shebang-body
+    - match: ^|(?=\S)  # Note: Ensure to highlight shebang if Haskell is embedded.
+      pop: 1
+
+  shebang-body:
+    - meta_scope: comment.line.shebang.haskell
+    # Note: Keep sync with first_line_match!
+    - match: \b(cabal|runhaskell|stack)\b
+      scope: constant.language.shebang.haskell
+    - match: \n
+      pop: 1
+
 ###[ PREPROCESSOR ]############################################################
 
   preprocessor-directives:
@@ -316,7 +336,7 @@ contexts:
     - match: LANGUAGE{{break}}
       scope: keyword.directive.language.haskell
       set: preprocessor-pragma-language-value
-    - match: (?:OPTIONS_GHC|OPTIONS_HADDOCK){{break}}
+    - match: (?:OPTIONS|OPTIONS_GHC|OPTIONS_HADDOCK){{break}}
       scope: keyword.directive.options.haskell
       set: preprocessor-pragma-options-value
     - match: (?:COMPLETE|INLINE|INLINABLE|MINIMAL|NOINLINE){{break}}
@@ -535,6 +555,10 @@ contexts:
       scope: invalid.illegal.accessor.haskell
     - match: module{{break}}
       scope: invalid.illegal.unexpected-keyword.haskell
+    - match: newtype{{break}}
+      scope: keyword.declaration.newtype.haskell
+    - match: type{{break}}
+      scope: keyword.declaration.type.haskell
     # class / constructor / data / module / type
     - match: '{{con_id}}'
       scope: entity.name.import.haskell

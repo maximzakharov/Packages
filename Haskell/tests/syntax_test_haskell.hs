@@ -192,6 +192,19 @@
 --              ^^^^^^^^^ meta.string.haskell string.quoted.double.haskell
 --                        ^^^ punctuation.section.preprocessor.end.haskell
 
+    {-# OPTIONS -XMagicHash -XBangPatterns #-}
+--  ^^^^^^^^^^^ meta.preprocessor.pragma.directive.haskell
+--             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.preprocessor.pragma.value.options.haskell
+--                                         ^^^ meta.preprocessor.pragma.value.haskell
+--                                            ^ - meta.preprocessor.haskell
+--  ^^^ punctuation.section.preprocessor.begin.haskell
+--      ^^^^^^^ keyword.directive.options.haskell
+--              ^^^^^^^^^^^ constant.other.pragma.haskell
+--              ^ punctuation.definition.constant.haskell
+--                          ^^^^^^^^^^^^^^ constant.other.pragma.haskell
+--                          ^ punctuation.definition.constant.haskell
+--                                         ^^^ punctuation.section.preprocessor.end.haskell
+
     {-# OPTIONS_GHC -Drelease #-}
 --  ^^^^^^^^^^^^^^^ meta.preprocessor.pragma.directive.haskell
 --                 ^^^^^^^^^^^ meta.preprocessor.pragma.value.options.haskell
@@ -813,6 +826,20 @@
                             )
 --                          ^ punctuation.section.sequence.end.haskell
 
+    import Foo.Bar.Types (type (|?) (..))
+--  ^^^^^^ meta.import.haskell
+--        ^^^^^^^^^^^^^^^ meta.import.module.haskell
+--                       ^^^^^^^^^^^^^^^^ meta.import.filter.haskell meta.sequence.tuple.haskell
+--                             ^^^^ meta.prefix.haskell
+--                                  ^^^^ meta.sequence.tuple.haskell meta.sequence.tuple.haskell
+--  ^^^^^^ keyword.declaration.import.haskell
+--         ^^^ variable.namespace.haskell
+--            ^ punctuation.accessor.dot.haskell
+--             ^^^ variable.namespace.haskell
+--                ^ punctuation.accessor.dot.haskell
+--                 ^^^^^ variable.namespace.haskell
+--                       ^ punctuation.section.sequence.begin.haskell
+--                        ^^^^ keyword.declaration.type.haskell
 
 -- [ FOREIGN EXPORT DECLARATIONS ]---------------------------------------------
 

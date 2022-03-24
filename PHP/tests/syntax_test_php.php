@@ -827,6 +827,9 @@ enum Suit {
     case Spades;
 }
 
+enum Suit: string extends Colorful {}
+//                ^^^^^^^ invalid
+
 enum Suit: string implements Colorful {
 // ^ keyword.declaration.enum
 //   ^^^^ entity.name.enum
@@ -1108,7 +1111,7 @@ $user_1 = new User("John", "a@b.com");
 //                                                   ^ storage.type.nullable.php
 //                                                    ^ storage.type.php
 
-    function intersectionTypeFunction(?int $param1): Interface1&Interface2 {}
+    function intersectionTypeFunction(?int $param1): Interface1 & Interface2 {}
 //  ^ keyword.declaration.function
 //           ^ entity.name.function
 //                                   ^ punctuation.section.group.begin
@@ -1116,24 +1119,28 @@ $user_1 = new User("John", "a@b.com");
 //                                     ^ meta.function.parameters
 //                                                ^ punctuation.section.group.end
 //                                                   ^^^^^^^^^^ support.class
-//                                                             ^ punctuation.separator.type.intersection
-//                                                              ^^^^^^^^^^ support.class
+//                                                              ^ punctuation.separator.type.intersection
+//                                                                ^^^^^^^^^^ support.class
 
     function unionTypeFunction(
 //  ^ keyword.declaration.function
 //           ^ entity.name.function.php
-        Foo|\Foo\Bar|?int $param1,
+        int | string $param0,
+//      ^^^ storage.type
+//          ^ punctuation.separator.type
+//            ^^^^^^ storage.type
+        Foo | \Foo\Bar | ?int $param1,
 //      ^^^ support.class
-//         ^ punctuation.separator.type
-//          ^ punctuation.separator.namespace
-//           ^^^ support.other.namespace
-//              ^ punctuation.separator.namespace
-//               ^^^ support.class
-//                  ^ punctuation.separator.type
-//                   ^ storage.type.nullable
-//                    ^^^ storage.type
-//                        ^ punctuation.definition.variable
-//                         ^^^^^^ variable.parameter
+//          ^ punctuation.separator.type
+//            ^ punctuation.separator.namespace
+//             ^^^ support.other.namespace
+//                ^ punctuation.separator.namespace
+//                 ^^^ support.class
+//                     ^ punctuation.separator.type
+//                       ^ storage.type.nullable
+//                        ^^^ storage.type
+//                            ^ punctuation.definition.variable
+//                             ^^^^^^ variable.parameter
         Foo|\Foo\Bar|?int $param2,
 //      ^^^ support.class
 //         ^ punctuation.separator.type
@@ -1470,7 +1477,7 @@ try {
 //        ^^^^^^ support.other.namespace.php
 //              ^ punctuation.separator.namespace.php
 //               ^^^^^^^^^^ support.class.exception.php
-//                          ^ punctuation.separator.catch.php
+//                          ^ punctuation.separator.type.union.php
 //                            ^^^^^^^^^^^^^^^^^ meta.path.php
 //                            ^ punctuation.separator.namespace.php
 //                             ^^^^^^ support.other.namespace.php
@@ -1486,7 +1493,7 @@ try {
 //   ^^^^^^ support.other.namespace.php
 //         ^ punctuation.separator.namespace.php
 //          ^^^^^^^^^^ support.class.exception.php
-//                     ^ punctuation.separator.catch.php
+//                     ^ punctuation.separator.type.union.php
     \Custom\Exception2 $e
 //  ^ punctuation.separator.namespace.php
 //   ^^^^^^ support.other.namespace.php
@@ -1728,6 +1735,38 @@ $sql = "
 ";
 // <- meta.string.php string.quoted.double.php punctuation.definition.string.end.php - meta.interpolation - string string
 
+$sql = "SELECT " . $col . "FROM $table WHERE ( first_name =" . $name . ")" ; . "GROUP BY" ;
+//     ^ meta.string.php - meta.interpolation
+//      ^^^^^^^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//             ^ meta.string.php - meta.interpolation
+//              ^^^^^^^^^^ - meta.string
+//                        ^ meta.string.php - meta.interpolation
+//                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//                                                         ^ meta.string.php - meta.interpolation
+//                                                          ^^^^^^^^^^^ - meta.string
+//                                                                     ^ meta.string.php - meta.interpolation
+//                                                                      ^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//                                                                       ^ meta.string.php - meta.interpolation
+//                                                                        ^^^^^ - meta.string
+//                                                                             ^^^^^^^^^^ meta.string.php string.quoted.double.php - meta.interpolation
+//     ^ string.quoted.double.php punctuation.definition.string.begin.php
+//      ^^^^^^ keyword.other.DML.sql
+//             ^ string.quoted.double.php punctuation.definition.string.end.php
+//               ^ keyword.operator.string.php
+//                 ^^^^ variable.other.php
+//                      ^ keyword.operator.string.php
+//                        ^ string.quoted.double.php punctuation.definition.string.begin.php
+//                              ^^^^^^ variable.other.php
+//                                                         ^ string.quoted.double.php punctuation.definition.string.end.php
+//                                                           ^ keyword.operator.string.php
+//                                                             ^^^^^ variable.other.php
+//                                                                   ^ keyword.operator.string.php
+//                                                                     ^ string.quoted.double.php punctuation.definition.string.begin.php
+//                                                                       ^ string.quoted.double.php punctuation.definition.string.end.php
+//                                                                         ^ punctuation.terminator.expression.php
+//                                                                           ^ keyword.operator.string.php
+//                                                                                        ^ punctuation.terminator.expression.php
+
 $non_sql = 'NO SELECT HIGHLIGHTING!';
 //         ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php string.quoted.single.php - meta.interpolation - string string
 //         ^ punctuation.definition.string.begin
@@ -1738,6 +1777,7 @@ $sql = 'SELECT * FROM users WHERE first_name = \'Eric\'';
 //     ^ meta.string.php string.quoted.single.php punctuation.definition.string.begin.php - meta.interpolation - string string
 //      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php meta.interpolation.php source.sql - string.quoted.single.php
 //      ^ keyword.other.DML
+//                                             ^^^^^^^^ meta.string.sql string.quoted.single.sql
 //                                             ^^ constant.character.escape.php
 //                                                   ^^ constant.character.escape.php
 //                                                     ^ meta.string.php string.quoted.single.php punctuation.definition.string.end.php - meta.interpolation - string string
@@ -1749,6 +1789,37 @@ $sql = '
 //                                         ^^ constant.character.escape.php
 ';
 // <- meta.string.php string.quoted.single.php punctuation.definition.string.end.php - meta.interpolation - string string
+
+$sql = 'SELECT ' . $col . 'FROM table WHERE ( first_name =' . $name . ')' ; . 'GROUP BY' ;
+//     ^ meta.string.php - meta.interpolation
+//      ^^^^^^^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//             ^ meta.string.php - meta.interpolation
+//              ^^^^^^^^^^ - meta.string
+//                        ^ meta.string.php - meta.interpolation
+//                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//                                                        ^ meta.string.php - meta.interpolation
+//                                                         ^^^^^^^^^^^ - meta.string
+//                                                                    ^ meta.string.php - meta.interpolation
+//                                                                     ^ meta.string.php meta.interpolation.php source.sql.embedded.php
+//                                                                      ^ meta.string.php - meta.interpolation
+//                                                                       ^^^^^ - meta.string
+//                                                                            ^^^^^^^^^^ meta.string.php string.quoted.single.php - meta.interpolation
+//     ^ string.quoted.single.php punctuation.definition.string.begin.php
+//      ^^^^^^ keyword.other.DML.sql
+//             ^ string.quoted.single.php punctuation.definition.string.end.php
+//               ^ keyword.operator.string.php
+//                 ^^^^ variable.other.php
+//                      ^ keyword.operator.string.php
+//                        ^ string.quoted.single.php punctuation.definition.string.begin.php
+//                                                        ^ string.quoted.single.php punctuation.definition.string.end.php
+//                                                          ^ keyword.operator.string.php
+//                                                            ^^^^^ variable.other.php
+//                                                                  ^ keyword.operator.string.php
+//                                                                    ^ string.quoted.single.php punctuation.definition.string.begin.php
+//                                                                      ^ string.quoted.single.php punctuation.definition.string.end.php
+//                                                                        ^ punctuation.terminator.expression.php
+//                                                                          ^ keyword.operator.string.php
+//                                                                                       ^ punctuation.terminator.expression.php
 
 preg_replace('/[a-zSOME_CHAR]*+\'\n  $justTxt  \1  \\1/m');
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.single
@@ -1935,12 +2006,12 @@ echo <<< yml
 //       ^^^ entity.name.tag.heredoc
 one: two
 //^^^^^^ meta.embedded.yaml source.yaml
-//^ string.unquoted.plain.out entity.name.tag
+//^ meta.mapping.key string
 // ^       punctuation.separator.key-value.mapping
-//   ^^^ string.unquoted.plain.out
+//   ^^^ string
 three: "$four"
 //^^^^^^^^^^^^ meta.embedded.yaml source.yaml
-//^^^ string.unquoted.plain.out entity.name.tag
+//^^^ meta.mapping.key string
 //   ^       punctuation.separator.key-value.mapping
 //     ^^^^^^^ string.quoted.double
 //      ^^^^^ variable.other.php
@@ -1957,7 +2028,7 @@ echo <<<sql
 //      ^^^ meta.string.heredoc meta.tag.heredoc
 //      ^^^ entity.name.tag.heredoc
 SELECT * FROM users WHERE first_name = 'John' LIMIT $limit
-//^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql.embedded.php
 // <- keyword.other.DML
 //     ^ variable.language.wildcard.asterisk
 //                                     ^^^^^^ string.quoted.single
@@ -1974,7 +2045,7 @@ echo <<<'SQL'
 //      ^^^^^ meta.string.heredoc meta.tag.heredoc
 //       ^^^ entity.name.tag.heredoc
 SELECT * FROM users WHERE first_name = 'John'\n
-//^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql.embedded.php
 // <- keyword.other.DML
 //     ^ variable.language.wildcard.asterisk
 //                                     ^^^^^^ string.quoted.single
@@ -2377,3 +2448,9 @@ h1 {
 //                              ^ punctuation.section.block.begin.php
 //                                         ^ punctuation.section.block.end.php
  ?>
+
+  <?phpzzzz
+//^^ punctuation.section.embedded.begin.php
+//  ^^^^^^^ constant.other.php
+  ?>
+//^^ punctuation.section.embedded.end.php
