@@ -552,10 +552,10 @@
 --         ^ punctuation.terminator.statement.haskell
 --           ^^^^^^ meta.import.haskell keyword.declaration.import.haskell
 
-    import safe qualified Data.Vector.Mutable as MutableVector
+    import safe qualified Data.Vector.Mutable as My.MutableVector
 --  ^^^^^^ meta.import.haskell
 --        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.import.module.haskell
---                                            ^^^^^^^^^^^^^^^^ meta.import.alias.haskell
+--                                            ^^^^^^^^^^^^^^^^^^^ meta.import.alias.haskell
 --  ^^^^^^ keyword.declaration.import.haskell
 --         ^^^^ storage.modifier.import.haskell
 --              ^^^^^^^^^ storage.modifier.import.haskell
@@ -565,7 +565,9 @@
 --                                   ^ punctuation.accessor.dot.haskell - variable
 --                                    ^^^^^^^ variable.namespace.haskell - punctuation
 --                                            ^^ keyword.declaration.import.as.haskell
---                                               ^^^^^^^^^^^^^ entity.name.import.namespace.haskell
+--                                               ^^ variable.namespace.haskell
+--                                                 ^ punctuation.accessor.dot.haskell
+--                                                  ^^^^^^^^^^^^^ variable.namespace.haskell
 
     import
 --  ^^^^^^ meta.import.haskell keyword.declaration.import.haskell
@@ -584,8 +586,22 @@
 --  ^^^ meta.import.alias.haskell
 --  ^^ keyword.declaration.import.as.haskell
     MutableVector
---  ^^^^^^^^^^^^^ meta.import.alias.haskell entity.name.import.namespace.haskell
---               ^ - meta.import - entity
+--  ^^^^^^^^^^^^^ meta.import.alias.haskell variable.namespace.haskell
+
+--  escape from imports as early as possible
+    import Data.Vector.Mutable My.MutableVector
+--  ^^^^^^ meta.import.haskell
+--        ^^^^^^^^^^^^^^^^^^^^^ meta.import.module.haskell
+--                             ^^^^^^^^^^^^^^^^^^ - meta.import
+--  ^^^^^^ keyword.declaration.import.haskell
+--         ^^^^ variable.namespace.haskell - punctuation
+--             ^ punctuation.accessor.dot.haskell - variable
+--              ^^^^^^ variable.namespace.haskell - punctuation
+--                    ^ punctuation.accessor.dot.haskell - variable
+--                     ^^^^^^^ variable.namespace.haskell - punctuation
+--                             ^^ variable.namespace.haskell
+--                               ^ punctuation.accessor.dot.haskell
+--                                ^^^^^^^^^^^^^ storage.type.haskell
 
     import Mod1.Mod2.Module (funcName, unboxed#, Type#)
 --  ^^^^^^ meta.import.haskell - meta.sequence
@@ -1021,15 +1037,14 @@
 --                     ^ storage.modifier.unboxed.haskell
 
     class ModId.QTyCls tyVar1 tyVar2, ident
---  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.class.haskell
---                                  ^^^^^^^ - meta.declaration
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.class.haskell
 --  ^^^^^ keyword.declaration.class.haskell
 --        ^^^^^ variable.namespace.haskell
 --             ^ punctuation.accessor.dot.haskell
 --              ^^^^^^ entity.name.class.haskell
 --                     ^^^^^^ variable.other.haskell
 --                            ^^^^^^ variable.other.haskell
---                                  ^ punctuation.separator.sequence.haskell
+--                                  ^ invalid.illegal.haskell
 --                                    ^^^^^ variable.other.haskell
 
     class ModId.QTyCls tyVar1 tyVar2 =>
@@ -1109,13 +1124,39 @@
 --         ^^^^^^^ support.class.prelude.haskell
 --                 ^ variable.other.haskell
 --                  ^ punctuation.separator.sequence.haskell
---                    ^^^^^^^^ storage.type.haskell
+--                    ^^^^^^^^ support.class.prelude.haskell
 --                             ^ variable.other.haskell
 --                              ^ punctuation.section.sequence.end.haskell
 --                                ^^ punctuation.separator.type.context.haskell
 --                                   ^^^^^^^^^^^ entity.name.class.haskell
 --                                               ^ variable.other.haskell
 --                                                 ^^^^^ keyword.control.context.haskell
+
+    class (b ~ (Body b) GhcPs, AnnoBody b) => DisambECP b where
+--  ^^^^^ meta.declaration.class.haskell
+--       ^ meta.declaration.class.context.haskell - meta.sequence
+--        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.class.context.haskell meta.sequence.tuple.haskell
+--             ^^^^^^^^ meta.group.haskell
+--                                        ^ meta.declaration.class.context.haskell - meta.sequence
+--                                         ^^^^^^^^^^^^^^^ meta.declaration.class.haskell
+--  ^^^^^ keyword.declaration.class.haskell
+--        ^ punctuation.section.sequence.begin.haskell
+--         ^ variable.other.haskell
+--           ^ keyword.operator.haskell
+--             ^ punctuation.section.group.begin.haskell
+--              ^^^^ storage.type.haskell
+--                   ^ variable.other.haskell
+--                    ^ punctuation.section.group.end.haskell
+--                      ^^^^^ storage.type.haskell
+--                           ^ punctuation.separator.sequence.haskell
+--                             ^^^^^^^^ storage.type.haskell
+--                                      ^ variable.other.haskell
+--                                       ^ punctuation.section.sequence.end.haskell
+--                                         ^^ punctuation.separator.type.context.haskell
+--                                            ^^^^^^^^^ entity.name.class.haskell
+--                                                      ^ variable.other.haskell
+--                                                        ^^^^^ keyword.control.context.haskell
+--
 
 --  A class declaration with no where part may be useful for combining
 --  a collection of classes into a larger one that inherits all of the class
@@ -1245,15 +1286,13 @@
 
     -- Declare a list-like instance for Char
     data instance XList Char = XCons !Char !(XList Char) | XNil
---  ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
---                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.declaration
---                                          ^^^^^^^^^^^^ meta.group.haskell
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
 --  ^^^^ keyword.declaration.data.haskell
 --       ^^^^^^^^ storage.modifier.family.haskell
 --                ^^^^^ entity.name.type.haskell
 --                      ^^^^ support.type.prelude.haskell
 --                           ^ keyword.operator.haskell
---                             ^^^^^ storage.type.haskell
+--                             ^^^^^ entity.name.constant.haskell
 --                                   ^ keyword.operator.haskell
 --                                    ^^^^ support.type.prelude.haskell
 --                                         ^ keyword.operator.haskell
@@ -1262,19 +1301,18 @@
 --                                                 ^^^^ support.type.prelude.haskell
 --                                                     ^ punctuation.section.group.end.haskell
 --                                                       ^ punctuation.separator.sequence.haskell
---                                                         ^^^^ storage.type.haskell
+--                                                         ^^^^ entity.name.constant.haskell
 
     -- Declare a number-like instance for ()
     data instance XList () = XListUnit !Int
---  ^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
---                         ^^^^^^^^^^^^^^^^^ - meta.declaration
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
 --  ^^^^ keyword.declaration.data.haskell
 --       ^^^^^^^^ storage.modifier.family.haskell
 --                ^^^^^ entity.name.type.haskell
 --                      ^ punctuation.section.sequence.begin.haskell
 --                       ^ punctuation.section.sequence.end.haskell
 --                         ^ keyword.operator.haskell
---                           ^^^^^^^^^ storage.type.haskell
+--                           ^^^^^^^^^ entity.name.constant.haskell
 --                                     ^ keyword.operator.haskell
 --                                      ^^^ support.type.prelude.haskell
 
@@ -1286,7 +1324,7 @@
     Record {
 --  ^^^^^^^ - meta.block
 --         ^^ meta.block.haskell
---  ^^^^^^ storage.type.haskell
+--  ^^^^^^ entity.name.constant.haskell
 --         ^ punctuation.section.block.begin.haskell
         recordInt :: Int
 --      ^^^^^^^^^ variable.other.haskell
@@ -1307,10 +1345,10 @@
 --    ^ punctuation.separator.sequence.haskell
 --      ^^^^^^^^^^^^^^ variable.other.haskell
 --                     ^^ punctuation.separator.type.haskell
---                        ^^^^^^^^ support.class.prelude.haskell
+--                        ^^^^^^^^ support.type.prelude.haskell
       } deriving (Eq, Ord, Generic)
---   ^^ meta.block.haskell
---     ^ - meta
+--   ^^ meta.declaration.data.haskell meta.block.haskell
+--     ^ meta.declaration.data.haskell
 --      ^^^^^^^^^ meta.declaration.deriving.haskell - meta.sequence
 --               ^^^^^^^^^^^^^^^^^^ meta.declaration.deriving.haskell meta.sequence.tuple.haskell
 --                                 ^ - meta.declaration.deriving - meta.sequence
@@ -1347,10 +1385,16 @@
 --  ^^^^ keyword.declaration.data.haskell
 --       ^^^^^^^^^^ entity.name.type.haskell
 --                  ^ keyword.operator.haskell
-        Flipper !Record
---      ^^^^^^^ storage.type.haskell
---              ^ keyword.operator.haskell
---               ^^^^^^ storage.type.haskell
+        String !Record
+--      ^^^^^^ entity.name.constant.haskell
+--             ^ keyword.operator.haskell
+--              ^^^^^^ storage.type.haskell
+      | Constr (->)
+--      ^^^^^^ entity.name.constant.haskell
+--             ^^^^ meta.prefix.haskell
+--             ^ punctuation.definition.prefix.begin.haskell
+--              ^^ keyword.operator.haskell
+--                ^ punctuation.definition.prefix.end.haskell
       | Int :! Int
 --    ^ punctuation.separator.sequence.haskell
 --      ^^^ support.type.prelude.haskell
@@ -1368,11 +1412,12 @@
 --           ^^^^ meta.infix.haskell keyword.operator.function.infix.haskell
 --               ^ meta.infix.haskell punctuation.definition.infix.end.haskell
 --                 ^^^^^^ support.type.prelude.haskell
-      | String :# Record
+      | String :# !Record
 --    ^ punctuation.separator.sequence.haskell
 --      ^^^^^^ support.type.prelude.haskell
 --             ^^ keyword.operator.haskell
---                ^^^^^^ storage.type.haskell
+--                ^ keyword.operator.haskell
+--                 ^^^^^^ storage.type.haskell
       | Simple :$ Outrageous
 --    ^ punctuation.separator.sequence.haskell
 --      ^^^^^^ storage.type.haskell
@@ -1380,7 +1425,7 @@
 --                ^^^^^^^^^^ storage.type.haskell
       | DontDoThis { outrageousInt :: Int, outrageousString :: String }
 --    ^ punctuation.separator.sequence.haskell
---      ^^^^^^^^^^ storage.type.haskell
+--      ^^^^^^^^^^ entity.name.constant.haskell
 --                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.block.haskell
 --                 ^ punctuation.section.block.begin.haskell
 --                   ^^^^^^^^^^^^^ meta.block.haskell variable.other.haskell
@@ -1440,6 +1485,180 @@
 --                                            ^ punctuation.accessor.dot.haskell
 --                                             ^^^^^ support.class.prelude.haskell
         }
+
+    data Bool = True | False
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
+--  ^^^^ keyword.declaration.data.haskell
+--       ^^^^ entity.name.type.haskell
+--            ^ keyword.operator.haskell
+--              ^^^^ entity.name.constant.haskell
+--                   ^ punctuation.separator.sequence.haskell
+--                     ^^^^^ entity.name.constant.haskell
+
+    data Tree a = Tip | Node a (Tree a) (Tree a)
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
+--  ^^^^ keyword.declaration.data.haskell
+--       ^^^^ entity.name.type.haskell
+--            ^ variable.other.haskell
+--              ^ keyword.operator.haskell
+--                ^^^ entity.name.constant.haskell
+--                    ^ punctuation.separator.sequence.haskell
+--                      ^^^^ entity.name.constant.haskell
+--                           ^ variable.other.haskell
+--                             ^^^^^^^^ meta.group.haskell
+--                             ^ punctuation.section.group.begin.haskell
+--                              ^^^^ storage.type.haskell
+--                                   ^ variable.other.haskell
+--                                    ^ punctuation.section.group.end.haskell
+--                                      ^^^^^^^^ meta.group.haskell
+--                                      ^ punctuation.section.group.begin.haskell
+--                                       ^^^^ storage.type.haskell
+--                                            ^ variable.other.haskell
+--                                             ^ punctuation.section.group.end.haskell
+
+    -- make sure not to break following function definitions
+    data Type a = Con Type1 !Type2 a
+    func :: Type
+--  ^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^^^ meta.function.identifier.haskell
+--  ^^^^ entity.name.function.haskell
+--       ^^ punctuation.separator.type.haskell
+--          ^^^^ support.type.prelude.haskell
+
+    -- make sure not to break following function definitions
+    data Type a = Con { var :: Type }
+    func :: Type
+--  ^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^^^ meta.function.identifier.haskell
+--  ^^^^ entity.name.function.haskell
+--       ^^ punctuation.separator.type.haskell
+--          ^^^^ support.type.prelude.haskell
+
+    -- make sure not to break following function definitions
+    data Type a = Type1 :$ Type2
+    func :: Type
+--  ^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^^^ meta.function.identifier.haskell
+--  ^^^^ entity.name.function.haskell
+--       ^^ punctuation.separator.type.haskell
+--          ^^^^ support.type.prelude.haskell
+
+    -- make sure not to break following function definitions
+    data Type a = Type1 :$ Type2
+    func
+         :: Type
+--  ^^^^^^^^^^^^^ - meta.declaration.data
+--       ^^ punctuation.separator.type.haskell
+--          ^^^^ support.type.prelude.haskell
+
+    -- make sure not to break following function definitions
+    data Type a = Type1 :$ Type2
+    foo, bar, baz :: Type
+--  ^^^^^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^^^^^^^^^^^^ meta.function.identifier.haskell
+--  ^^^ entity.name.function.haskell
+--     ^ punctuation.separator.sequence.haskell
+--       ^^^ entity.name.function.haskell
+--          ^ punctuation.separator.sequence.haskell
+--            ^^^ entity.name.function.haskell
+--                ^^ punctuation.separator.type.haskell
+--                   ^^^^ support.type.prelude.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Con Type1 !Type2 a
+    var = Con
+--  ^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^ keyword.operator.haskell
+--        ^^^ storage.type.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Con { var :: Type }
+    var = Con
+--  ^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^ keyword.operator.haskell
+--        ^^^ storage.type.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Type1 :$ Type2
+    var = Con
+--  ^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^ keyword.operator.haskell
+--        ^^^ storage.type.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Type1 :$ Type2
+    foo bar baz = Con
+--  ^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^^^ variable.other.haskell
+--          ^^^ variable.other.haskell
+--              ^ keyword.operator.haskell
+--                ^^^ storage.type.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Type1 :$ Type2
+    var <- True = Con
+--  ^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^^ keyword.operator.arrow.haskell
+--              ^ keyword.operator.haskell
+--                ^^^ storage.type.haskell
+
+    -- make sure not to break assignment expression
+    data Type a = Type1 :$ Type2
+    foo bar baz <- True = Con
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^^^ variable.other.haskell
+--          ^^^ variable.other.haskell
+--              ^^ keyword.operator.arrow.haskell
+--                 ^^^^ support.constant.prelude.haskell
+--                      ^ keyword.operator.haskell
+--                        ^^^ storage.type.haskell
+
+    -- make sure not to break constructor by following function definition
+    data Type
+        = Foo                    -- comment
+        | Bar Bool {- comment -} -- comment
+--     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
+--      ^ punctuation.separator.sequence.haskell
+--        ^^^ entity.name.constant.haskell
+--            ^^^^ support.type.prelude.haskell
+--                 ^^^^^^^^^^^^^ comment.block.haskell
+--                               ^^^^^^^^^^^ comment.line.double-dash.haskell
+    foo, bar, baz :: Mode
+--  ^^^^^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^^^^^^^^^^^^ meta.function.identifier.haskell
+--  ^^^ entity.name.function.haskell
+--     ^ punctuation.separator.sequence.haskell
+--       ^^^ entity.name.function.haskell
+--          ^ punctuation.separator.sequence.haskell
+--            ^^^ entity.name.function.haskell
+--                ^^ punctuation.separator.type.haskell
+--                   ^^^^ storage.type.haskell
+
+    -- make sure not to break constructor by following assignment expression
+    data Type
+        = Foo                    -- comment
+        | Bar Bool {- comment -} -- comment
+--     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.data.haskell
+--      ^ punctuation.separator.sequence.haskell
+--        ^^^ entity.name.constant.haskell
+--            ^^^^ support.type.prelude.haskell
+--                 ^^^^^^^^^^^^^ comment.block.haskell
+--                               ^^^^^^^^^^^ comment.line.double-dash.haskell
+    foo bar baz <- True = Con
+--  ^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.declaration.data
+--  ^^^ variable.other.haskell
+--      ^^^ variable.other.haskell
+--          ^^^ variable.other.haskell
+--              ^^ keyword.operator.arrow.haskell
+--                 ^^^^ support.constant.prelude.haskell
+--                      ^ keyword.operator.haskell
+--                        ^^^ storage.type.haskell
 
 -- [ DEFAULT DECLARATIONS ] ---------------------------------------------------
 
@@ -1538,7 +1757,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 
     instance ModId.QTyCls []
 --  ^^^^^^^^^^^^^^^^^^^^^^ meta.declaration.instance.haskell - meta.sequence
@@ -1547,7 +1766,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ punctuation.section.sequence.end.haskell
 
@@ -1558,7 +1777,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ punctuation.section.sequence.end.haskell
 
@@ -1569,7 +1788,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ punctuation.separator.sequence.haskell
 --                          ^ punctuation.section.sequence.end.haskell
@@ -1581,7 +1800,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.definition.prefix.begin.haskell
 --                         ^^ keyword.operator.haskell
 --                           ^ punctuation.definition.prefix.end.haskell
@@ -1591,7 +1810,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ variable.other.haskell
 
     instance ModId.QTyCls [a]
@@ -1601,7 +1820,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ variable.other.haskell
 --                          ^ punctuation.section.sequence.end.haskell
@@ -1613,7 +1832,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ variable.other.haskell
 --                          ^ punctuation.separator.sequence.haskell
@@ -1627,7 +1846,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.group.begin.haskell
 --                         ^ variable.other.haskell
 --                           ^^ keyword.operator.arrow.haskell
@@ -1643,7 +1862,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.group.begin.haskell
 --                         ^ punctuation.section.sequence.begin.haskell
 --                          ^ punctuation.section.sequence.end.haskell
@@ -1660,7 +1879,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.group.begin.haskell
 --                         ^ punctuation.section.sequence.begin.haskell
 --                          ^ punctuation.section.sequence.end.haskell
@@ -1677,7 +1896,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.group.begin.haskell
 --                         ^ punctuation.section.sequence.begin.haskell
 --                          ^ punctuation.separator.sequence.haskell
@@ -1695,7 +1914,7 @@
 --  ^^^^^^^^ keyword.declaration.instance.haskell
 --           ^^^^^ variable.namespace.haskell
 --                ^ punctuation.accessor.dot.haskell
---                 ^^^^^^ entity.name.class.haskell
+--                 ^^^^^^ storage.type.haskell
 --                        ^ punctuation.section.group.begin.haskell
 --                         ^ punctuation.definition.prefix.begin.haskell
 --                          ^^ keyword.operator.haskell
@@ -1714,7 +1933,7 @@
 --           ^^^ support.class.prelude.haskell
 --               ^ variable.other.haskell
 --                 ^^ punctuation.separator.type.context.haskell
---                    ^^^ entity.name.class.haskell
+--                    ^^^ storage.type.haskell
 --                        ^ punctuation.section.sequence.begin.haskell
 --                         ^ variable.other.haskell
 --                          ^ punctuation.section.sequence.end.haskell
@@ -1737,7 +1956,7 @@
 --                       ^ variable.other.haskell
 --                        ^ punctuation.section.sequence.end.haskell
 --                          ^^ punctuation.separator.type.context.haskell
---                             ^^^ entity.name.class.haskell
+--                             ^^^ storage.type.haskell
 --                                 ^ punctuation.section.sequence.begin.haskell
 --                                  ^ variable.other.haskell
 --                                   ^ punctuation.section.sequence.end.haskell
@@ -1762,7 +1981,7 @@
 --  ^^^^^^^ keyword.declaration.newtype.haskell
 
    'newtype
--- ^ keyword.operator.haskell
+-- ^ - keyword.declaration
 --  ^^^^^^^ keyword.declaration.newtype.haskell
 
     newtype'
@@ -1821,7 +2040,7 @@
 --  ^^^^ keyword.declaration.type.haskell
 
    'type
--- ^ keyword.operator.haskell
+-- ^ - keyword.declaration
 --  ^^^^ keyword.declaration.type.haskell
 
     type'
@@ -1882,6 +2101,27 @@
 --                             ^^^^^ variable.namespace.haskell
 --                                  ^ punctuation.accessor.dot.haskell
 --                                   ^^^^^^ entity.name.type.haskell
+
+    type (A <= b) ~ (B >= Q) => CtxCls
+--  ^^^^ meta.declaration.type.haskell
+--      ^^^^^^^^^^^^^^^^^^^^^ meta.declaration.type.context.haskell
+--       ^^^^^^^^ meta.group.haskell
+--                  ^^^^^^^^ meta.group.haskell
+--                           ^^^^^^^^^^ meta.declaration.type.haskell
+--  ^^^^ keyword.declaration.type.haskell
+--       ^ punctuation.section.group.begin.haskell
+--        ^ storage.type.haskell
+--          ^^ keyword.operator.haskell
+--             ^ variable.other.haskell
+--              ^ punctuation.section.group.end.haskell
+--                ^ keyword.operator.haskell
+--                  ^ punctuation.section.group.begin.haskell
+--                   ^ storage.type.haskell
+--                     ^^ keyword.operator.haskell
+--                        ^ storage.type.haskell
+--                         ^ punctuation.section.group.end.haskell
+--                           ^^ punctuation.separator.type.context.haskell
+--                              ^^^^^^ entity.name.type.haskell
 
     type Id a = a
 --  ^^^^^^^^^^ meta.declaration.type.haskell
@@ -2149,11 +2389,11 @@
 --                  ^^^^^^^ variable.other.haskell
 --                          ^ variable.other.haskell
 --                            ^ keyword.operator.haskell
---                              ^^^^ support.type.prelude.haskell
+--                              ^^^^ support.constant.prelude.haskell
 --                                   ^ variable.other.haskell
                   | otherwise = M.lookup c asciiMap
 --                ^ punctuation.separator.sequence.haskell
---                  ^^^^^^^^^ support.constant.prelude.haskell
+--                  ^^^^^^^^^ variable.other.haskell
 --                            ^ keyword.operator.haskell
 --                              ^ variable.namespace.haskell
 --                               ^ punctuation.accessor.dot.haskell
@@ -2932,7 +3172,7 @@ main = do
 --       ^ variable.other.haskell
 
     Just
---  ^^^^ support.type.prelude.haskell
+--  ^^^^ support.constant.prelude.haskell
 
     Just#
 --  ^^^^ storage.type.haskell - storage.modifier

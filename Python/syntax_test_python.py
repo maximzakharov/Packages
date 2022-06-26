@@ -353,7 +353,7 @@ NO_SWEAT NO AA1
 #           ^^^ variable.other.constant
 
 _ self
-# <- variable.language.python
+# <- variable.language.anonymous.python
 # ^^^^ variable.language.python
 
 
@@ -1001,7 +1001,7 @@ def _():
 #       ^^ meta.statement.conditional.case.patterns.python
 #         ^ meta.statement.conditional.case.python
 #   ^^^^ keyword.control.conditional.case.python
-#        ^ variable.language.python
+#        ^ variable.language.anonymous.python
 #         ^ punctuation.section.block.conditional.case.python
 #           ^^^^^^^^^^ comment.line.number-sign.python
         print("Code not found")
@@ -1280,7 +1280,7 @@ def _():
 
     case *expr as _:
 #              ^^ keyword.control.conditional.case.as.python
-#                 ^ variable.language.python
+#                 ^ variable.language.anonymous.python
 
     case *expr as isinstance:
 #              ^^ keyword.control.conditional.case.as.python
@@ -1487,6 +1487,15 @@ def type_annotations_line_continuation() \
 #     ^ meta.function.python punctuation.section.function.begin.python
     pass
 
+def type_annotation_with_defaults(foo: str | None = None)
+#                                    ^^^^^^^^^^^^^ meta.function.parameters.annotation.python - meta.function.parameters.default-value
+#                                                 ^^^^^^ meta.function.parameters.default-value.python - meta.function.parameters.annotation
+#                                      ^^^ support.type.python
+#                                          ^ keyword.operator.arithmetic.python
+#                                            ^^^^ constant.language.null.python
+#                                                 ^ keyword.operator.assignment.python
+#                                                   ^^^^ constant.language.null.python
+
 async def coroutine(param1):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function
 #                  ^^^^^^^^ meta.function.parameters - meta.function meta.function
@@ -1600,8 +1609,10 @@ class MyClass(Inherited, \
 #                      ^ punctuation.separator.inheritance
 #                        ^ punctuation.separator.continuation.line.python
               module . Inherited2, metaclass=ABCMeta):
-#             ^^^^^^^^^^^^^^^^^^^ entity.other.inherited-class
+#             ^^^^^^^^^^^^^^^^^^^ meta.path - meta.path meta.path
+#             ^^^^^^ variable.namespace - entity
 #                    ^ punctuation.accessor.dot
+#                      ^^^^^^^^^^ entity.other.inherited-class
 #                                ^ punctuation.separator.inheritance
 #                                  ^^^^^^^^^ variable.parameter.class-inheritance
 #                                           ^ keyword.operator.assignment
@@ -1841,6 +1852,30 @@ myset = {"key", True, key2, [-1], {}:1}
 #                                 ^^ meta.mapping.empty.python
 #                                   ^ invalid.illegal.colon-inside-set.python
 #                                     ^ punctuation.section.set.end.python
+
+myset = {a := 1, b := 2}
+#       ^^^^^^^^^^^^^^^^ meta.set.python
+#       ^ punctuation.section.set.begin.python
+#          ^^ keyword.operator.assignment.inline.python
+#             ^ constant.numeric.value.python
+#              ^ punctuation.separator.set.python
+#                  ^^ keyword.operator.assignment.inline.python
+#                     ^ constant.numeric.value.python
+#                      ^ punctuation.section.set.end.python
+
+{a := 1: 2}
+# <- meta.set.python punctuation.section.set.begin.python
+#^^^^^^^^^^ meta.set.python
+#  ^^ keyword.operator.assignment.inline.python
+#      ^ invalid.illegal.colon-inside-set.python
+#         ^ punctuation.section.set.end.python
+
+{1, b := 2}
+# <- meta.set.python punctuation.section.set.begin.python
+#^^^^^^^^^^ meta.set.python
+# ^ punctuation.separator.set.python
+#     ^^ keyword.operator.assignment.inline.python
+#         ^ punctuation.section.set.end.python
 
 mapping_or_set = {
 #                ^ meta.mapping.python punctuation.section.mapping.begin.python
@@ -2411,10 +2446,6 @@ def foo(x: y:=f(x)) -> a:=None: pass
 foo(x = y := f(x), y=x:=2)
 #         ^^ invalid.illegal.not-allowed-here.python
 #                     ^^ invalid.illegal.not-allowed-here.python
-{a := 1: 2}
-#  ^^ invalid.illegal.not-allowed-here.python
-{1, b := 2}
-#     ^^ invalid.illegal.not-allowed-here.python
 [1][x:=0]
 #    ^^ invalid.illegal.not-allowed-here.python
 def foo(answer = p := 42):  pass

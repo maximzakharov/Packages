@@ -226,6 +226,14 @@ import foo;
 //           ^ punctuation.separator.type
 //             ^^^ meta.type support.type.any
 //                ^ punctuation.separator
+
+        1: any,
+//      ^ meta.number.integer.decimal
+//      ^ constant.numeric.value
+//       ^ punctuation.separator.type
+//        ^^^^ meta.type
+//         ^^^ support.type.any
+//            ^ punctuation.separator
     }
 //  ^ meta.block punctuation.section.block.end
 
@@ -1063,6 +1071,15 @@ let x: ( ... foo : any ) => any;
 //               ^ punctuation.separator.type
 //                 ^^^ support.type.any
 
+let x: < T > ( ... foo : any ) => any;
+//     ^^^^^ meta.generic
+//       ^ variable.parameter.generic
+//           ^^^^^^^^^^^^^^^^^ meta.group
+//             ^^^ keyword.operator.spread
+//                 ^^^ variable.parameter
+//                     ^ punctuation.separator.type
+//                       ^^^ support.type.any
+
 let x: () => T
     U
 //  ^ variable.other.constant - meta.type
@@ -1218,19 +1235,33 @@ const x = {
     readonly get,
 //  ^^^^^^^^ storage.modifier
 //           ^^^ variable.other.readwrite
+
+    f<T>() {},
+//  ^^^^^^^^^ meta.function
+//  ^ entity.name.function
+//   ^^^ meta.generic
 };
 
-    <any>(<any>a);
-//  ^^^^^ meta.assertion
-//  ^ punctuation.definition.assertion.begin
-//   ^^^ support.type.any
-//      ^ punctuation.definition.assertion.end
-//       ^^^^^^^^ meta.group
-//       ^ punctuation.section.group.begin
-//        ^^^^^ meta.assertion
-//        ^ punctuation.definition.assertion.begin
-//         ^^^ support.type.any
-//            ^ punctuation.definition.assertion.end
-//             ^ variable.other.readwrite
-//              ^ punctuation.section.group.end
-//               ^ punctuation.terminator.statement
+    true ? (a) : <T,foo="a">() => {} => {} : null; // </T>;
+//  ^^^^ constant.language.boolean.true
+//       ^ keyword.operator.ternary
+//         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function
+//         ^^^ meta.function.parameters
+//          ^ meta.binding.name variable.parameter.function
+//             ^ punctuation.separator.type
+//              ^^^^^^^^^^^^^^^^^^^^^ meta.type
+//               ^^^^^^^^^^^ meta.generic
+//                ^ variable.parameter.generic
+//                 ^ punctuation.separator.comma
+//                  ^^^ variable.parameter.generic
+//                     ^ keyword.operator.assignment
+//                      ^^^ meta.string string.quoted.double
+//                          ^^ meta.group
+//                             ^^ keyword.declaration.function
+//                                ^^ meta.mapping
+//                                   ^^ keyword.declaration.function.arrow
+//                                      ^^ meta.block
+//                                         ^ keyword.operator.ternary
+//                                           ^^^^ constant.language.null
+//                                               ^ punctuation.terminator.statement
+//                                                 ^^^^^^^^ comment.line.double-slash
