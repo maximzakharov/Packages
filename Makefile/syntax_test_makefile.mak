@@ -200,6 +200,18 @@ endef
 endef
 # <- invalid.illegal.stray
 
+override \
+# <- keyword.control.makefile
+#        ^ punctuation.separator.continuation.line.makefile
+
+override \
+	define foo
+# ^^^^^ keyword.control.makefile
+#       ^^^^ variable.other.makefile
+endef
+# <- keyword.control.makefile
+
+
 ########################################
 # 6.11 target-specific variable values #
 ########################################
@@ -210,6 +222,13 @@ prog : CFLAGS = -g
 #             ^ keyword
 #              ^ - string
 #               ^^ string - meta.function.arguments
+
+$(prog) : CFLAGS = -g
+#       ^ keyword.operator
+#         ^ variable - string
+#                ^ keyword
+#                 ^ - string
+#                  ^^ string - meta.function.arguments
 
 #########################################
 # 6.12 pattern-specific variable values #
@@ -975,3 +994,20 @@ html:
 #                                          ^^ variable.parameter.option.shell
 #                                             ^^^^^^^^^^^ variable.parameter.makefile
 #                                                         ^^^^^^^^^^^^^^ variable.parameter.makefile
+
+shell_string_interpolation:
+    var1="double nquoted $(string) value"
+    #    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function.body.makefile source.shell.embedded.makefile meta.string.shell string.quoted.double.shell
+    #                    ^^^^^^^^^ variable.parameter.makefile
+    #                    ^^ keyword.other.block.begin.makefile
+    #                            ^ keyword.other.block.end.makefile
+    var1='single nquoted $(string) value'
+    #    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function.body.makefile source.shell.embedded.makefile meta.string.shell string.quoted.single.shell
+    #                    ^^^^^^^^^ variable.parameter.makefile
+    #                    ^^ keyword.other.block.begin.makefile
+    #                            ^ keyword.other.block.end.makefile
+    var1=unquoted\ $(string)\ value
+    #    ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function.body.makefile source.shell.embedded.makefile meta.string.shell string.unquoted.shell
+    #              ^^^^^^^^^ variable.parameter.makefile
+    #              ^^ keyword.other.block.begin.makefile
+    #                      ^ keyword.other.block.end.makefile

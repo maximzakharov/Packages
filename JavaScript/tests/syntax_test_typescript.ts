@@ -344,6 +344,25 @@ import foo;
 //                     ^ keyword.operator.assignment
 //                       ^^^ meta.type-alias support.type.any
 
+    // ensure fixed deadlock caused by incomplete/invalid type expressions
+    // https://github.com/sublimehq/Packages/issues/3598
+    type x = {
+        bar: (cb: (
+//     ^^^^^^ meta.type-alias.js meta.mapping.js - meta.group
+//           ^^^ meta.type-alias.js meta.mapping.js meta.type.js meta.group.js
+//              ^^ meta.type-alias.js meta.mapping.js - meta.group
+//                ^ meta.type-alias.js meta.function.parameters.js
+//      ^^^ variable.other.readwrite.js
+//         ^ punctuation.separator.type.js
+//           ^ punctuation.section.group.begin.js
+//            ^^ support.class.js
+//                ^ punctuation.section.group.begin.js
+    };
+//  ^ meta.type-alias.js meta.mapping.js
+//   ^ - meta.type-alias - meta.mapping
+//  ^ punctuation.section.mapping.end.js
+//   ^ punctuation.terminator.statement.empty.js
+
     class Foo {
         foo: any = 42;
 //      ^^^ variable.other.readwrite
@@ -1265,3 +1284,43 @@ const x = {
 //                                           ^^^^ constant.language.null
 //                                               ^ punctuation.terminator.statement
 //                                                 ^^^^^^^^ comment.line.double-slash
+
+const f = (x): ((y) => any) => 42;
+//        ^^^^^^^^^^^^^^^^^^^^^^^ meta.function
+//        ^^^ meta.function.parameters
+//         ^ meta.binding.name variable.parameter.function
+//           ^ punctuation.separator.type
+//            ^^^^^^^^^^^^^^ meta.type
+//             ^^^^^^^^^^^^ meta.group
+//             ^ punctuation.section.group.begin
+//              ^^^ meta.group
+//              ^ punctuation.section.group.begin
+//               ^ variable.parameter
+//                ^ punctuation.section.group.end
+//                  ^^ keyword.declaration.function
+//                     ^^^ support.type.any
+//                        ^ punctuation.section.group.end
+//                          ^^ keyword.declaration.function.arrow
+//                             ^^ meta.block meta.number.integer.decimal
+//                             ^^ constant.numeric.value
+//                               ^ punctuation.terminator.statement
+
+const f = (x): (y) => 42 => z;
+//    ^ meta.binding.name entity.name.function
+//    ^ variable.other.readwrite
+//      ^ keyword.operator.assignment
+//        ^^^^^^^^^^^^^^^^^^^ meta.function
+//        ^ punctuation.section.group.begin
+//         ^ meta.binding.name variable.parameter.function
+//          ^ punctuation.section.group.end
+//           ^ punctuation.separator.type
+//            ^^^^^^^^^^^ meta.type
+//             ^^^ meta.group
+//             ^ punctuation.section.group.begin
+//              ^ variable.parameter
+//               ^ punctuation.section.group.end
+//                 ^^ keyword.declaration.function
+//                    ^^ meta.number.integer.decimal constant.numeric.value
+//                       ^^ keyword.declaration.function.arrow
+//                          ^ meta.block variable.other.readwrite
+//                           ^ punctuation.terminator.statement

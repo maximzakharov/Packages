@@ -22,7 +22,7 @@ contexts:
   main:
     - include: references
 
-##[ PROTOTYPES ]#######################################################
+###[ PROTOTYPES ]##############################################################
 
   # Trailing slashes can be used to break up long lines. '\' is only legal at
   # the end of a line, or in an escape such as '\"'. Anywhere else it will cause
@@ -47,7 +47,7 @@ contexts:
       scope: invalid.illegal.unexpected.eol.git
       pop: 1
 
-##[ COMMENTS ]#########################################################
+###[ COMMENTS ]################################################################
 
   comments:
     # comment which may start in the middle of a line
@@ -63,7 +63,7 @@ contexts:
       captures:
         1: punctuation.definition.comment.git
 
-##[ REFERENCES ]#######################################################
+###[ REFERENCES ]##############################################################
 
   references:
     # all github references
@@ -71,6 +71,7 @@ contexts:
     - include: email
     - include: username
     - include: commit
+    - include: urls
 
   issue:
     # issue reference
@@ -141,7 +142,18 @@ contexts:
         1: punctuation.separator.reference.commit.git  # (inside repository_ref)
         2: punctuation.separator.reference.commit.git
 
-##[ FNMATCH ]##########################################################
+  urls:
+    - match: |-
+        (?x)
+        \b(?:
+          https?://(?:(?:[\w\d\-]+(?:\.[\w\d\-.]+)+)|localhost)  # http://
+        | www\.[\w\d\-]+(?:\.[\w\d\-.]+)+                        # www.
+        )
+        /?[\w\d\-.?,!'(){}\[\]/+&@%$#=:"|~;]*                    # url path and query string
+        [\w\d\-~:/#@$*+=]                                        # allowed end chars
+      scope: markup.underline.link.git
+
+###[ FNMATCH ]#################################################################
 
   # The first characters of a path pattern may have special meaning and
   # must therefore be treated differently. This scope finally pops off
@@ -227,7 +239,7 @@ contexts:
     - match: \S
       scope: constant.character.char-class.fnmatch.git
 
-##[ PRETTY FORMATS ]###################################################
+###[ PRETTY FORMATS ]##########################################################
 
   # https://git-scm.com/docs/pretty-formats
 

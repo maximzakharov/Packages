@@ -776,6 +776,20 @@ extern(1)
   }
 //^ meta.class.d punctuation.section.block.end.d
 
+  class Foo : Bar
+  if (true) {}
+//^^^ meta.class.d - meta.parens
+//   ^^^^^^ meta.class.d meta.parens.d
+//         ^ meta.class.d - meta.parens - meta.block
+//          ^^ meta.class.d meta.block.d
+//            ^ - meta.class
+//^^ keyword.control.conditional.d
+//   ^ punctuation.section.parens.begin.d
+//    ^^^^ constant.language.d
+//        ^ punctuation.section.parens.end.d
+//          ^ punctuation.section.block.begin.d
+//           ^ punctuation.section.block.end.d
+
   interface S;
 //^^^^^^^^^^^^ meta.interface.d
 //^^^^^^^^^ keyword.declaration.interface.d
@@ -3194,3 +3208,9 @@ extern(1)
 //                   ^ meta.function-call.d meta.path.d variable.other.d
 //                    ^ meta.function-call.d punctuation.section.parens.end.d
 //                     ^ punctuation.terminator.d
+
+    constant = true;
+//  ^^^^^^^^ meta.path.d variable.other.d - storage
+//           ^ keyword.operator.assignment.d
+//             ^^^^ constant.language.d
+//                 ^ punctuation.terminator.d

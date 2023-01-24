@@ -16,6 +16,7 @@ version: 2
 file_extensions:
   - md
   - mdown
+  - mdwn
   - markdown
   - markdn
 
@@ -292,6 +293,7 @@ variables:
     | \B \* {{no_space_but_punct}}
     )
 
+  no_escape_behind: (?<![^\\]\\)(?<![\\]{3})
   # not followed by Unicode whitespace and not followed by a Unicode punctuation character
   no_space_nor_punct: (?![\s*\p{P}])
   # not followed by Unicode whitespace and followed by a Unicode punctuation character
@@ -781,6 +783,7 @@ contexts:
     - meta_scope: meta.paragraph.list.markdown
     - include: list-paragraph-fail
     - include: list-paragraph-end
+    - include: list-math-blocks
     - include: inlines
 
   list-paragraph-end:
@@ -905,17 +908,30 @@ contexts:
     - include: setext-heading-content
 
   setext-heading-content:
+    - include: setext-hard-line-breaks
     - include: emphasis
     - include: images
     - include: literals
     - include: links
     - include: markups
 
+  setext-hard-line-breaks:
+    # This context consumes what 'hard-line-breaks' does for normal
+    # paragraphs to avoid deadlock of ST's syntax engine.
+    #
+    # as workaround for
+    #    https://github.com/sublimehq/sublime_text/issues/5415
+    # causing
+    #    https://github.com/sublimehq/Packages/issues/3494
+    - match: '[ ]{2,}$'
+    - match: '\\\n'
+
   paragraph:
     # https://spec.commonmark.org/0.30/#paragraphs
     - meta_scope: meta.paragraph.markdown
     - include: paragraph-fail
     - include: paragraph-end
+    - include: math-blocks
     - include: inlines
 
   paragraph-end:
@@ -969,6 +985,7 @@ contexts:
     - include: fenced-jsx
     - include: fenced-lisp
     - include: fenced-lua
+    - include: fenced-makefile
     - include: fenced-matlab
     - include: fenced-objc
     - include: fenced-objcpp
@@ -1405,6 +1422,25 @@ contexts:
       escape: '{{fenced_code_block_escape}}'
       escape_captures:
         0: meta.code-fence.definition.end.lua.markdown-gfm
+        1: punctuation.definition.raw.code-fence.end.markdown
+
+  fenced-makefile:
+    - match: |-
+         (?x)
+          {{fenced_code_block_start}}
+          ((?i:makefile))
+          {{fenced_code_block_trailing_infostring_characters}}
+      captures:
+        0: meta.code-fence.definition.begin.makefile.markdown-gfm
+        2: punctuation.definition.raw.code-fence.begin.markdown
+        5: constant.other.language-name.markdown
+      embed: scope:source.makefile
+      embed_scope:
+        markup.raw.code-fence.makefile.markdown-gfm
+        source.makefile
+      escape: '{{fenced_code_block_escape}}'
+      escape_captures:
+        0: meta.code-fence.definition.end.makefile.markdown-gfm
         1: punctuation.definition.raw.code-fence.end.markdown
 
   fenced-matlab:
@@ -1950,24 +1986,43 @@ contexts:
         3: punctuation.definition.reference.end.markdown
         4: punctuation.separator.key-value.markdown
       push:
-        - link-def-end
+        - link-def-meta
+        - link-def-attr
         - link-def-title
         - link-def-url
 
-  link-def-end:
+  link-def-meta:
     - meta_include_prototype: false
     - meta_scope: meta.link.reference.def.markdown
     - include: immediately-pop
+
+  link-def-attr:
+    - match: \{
+      scope: punctuation.definition.attributes.begin.markdown
+      set: link-def-attr-body
+    - match: ^(?!\s*{)|(?=\S)
+      pop: 1
+
+  link-def-attr-body:
+    - meta_scope: meta.attributes.markdown
+    - include: tag-attributes
 
   link-def-title:
     - match: ^(?!\s*["'(])
       pop: 1
     - match: (?=["'(])
       set:
-        - expect-eol
+        - expect-attr-or-eol
         - link-title
+    - match: (?=\{)
+      pop: 1
     - match: \S.+
       scope: invalid.illegal.expected-eol.markdown
+
+  expect-attr-or-eol:
+    - match: (?=\{)
+      pop: 1
+    - include: expect-eol
 
   link-def-url:
     - match: <
@@ -2091,6 +2146,7 @@ contexts:
   literals:
     - include: code-spans
     - include: critics
+    - include: math-inline
     - include: escapes
 
   links:
@@ -2115,20 +2171,29 @@ contexts:
 
   code-spans:
     # https://spec.commonmark.org/0.30/#code-spans
-    - match: (`+)(?!`)
+    - match: (?=`+)
+      branch_point: code-spans
+      branch:
+        - code-span
+        - no-code-span
+
+  code-span:
+    - match: (`+)
       scope: punctuation.definition.raw.begin.markdown
-      push: code-span-body
+      set: code-span-body
 
   code-span-body:
     - meta_scope: markup.raw.inline.markdown
     - match: \1(?!`)
       scope: punctuation.definition.raw.end.markdown
       pop: 1
-    - match: '`+'
-    - match: ^\s*$\n?
-      scope: invalid.illegal.non-terminated.raw.markdown
+    - match: \`+
+    - match: '{{list_paragraph_end}}'
+      fail: code-spans
+
+  no-code-span:
+    - match: \`+
       pop: 1
-    - include: paragraph-end
 
 ###[ INLINE: EMPHASIS ]#######################################################
 
@@ -2723,6 +2788,7 @@ contexts:
       scope: invalid.illegal.attribute-name.markdown
 
   tag-attr-meta:
+    - meta_include_prototype: false
     - meta_scope: meta.attribute-with-value.markdown
     - include: immediately-pop
 
@@ -2800,6 +2866,7 @@ contexts:
         - link-url-scheme-separator
     # Github Flavoured Markdown
     # After a valid domain, zero or more non-space non-< characters may follow
+    # https://github.github.com/gfm/#autolinks-extension-
     - match: (?:(?:https|http|ftp)(://)|www\.)[\w-]+
       captures:
         1: punctuation.separator.path.markdown
@@ -2828,14 +2895,15 @@ contexts:
     # 3. Trailing punctuation (specifically, ?, !, ., ,, :, *, _, and ~) will not
     #    be considered part of the autolink, though they may be included in the
     #    interior # of the link
-    - match: (?=(?:\)|(?:{{html_entity}})*)[?!.,:*_~]*[\s<])
+    #    Note: contains some empirical (undocumented) punctuation such as ;, ', "
+    - match: (?=(?:\)|(?:{{html_entity}})*)[?!.,:;*_~'"]*[\s<])
       pop: 1
     - include: autolink-inet-common
 
   autolink-inet-group:
     - match: \)
       pop: 1
-    - match: (?=(?:{{html_entity}})*[?!.,:*_~]*[\s<])
+    - match: (?=(?:{{html_entity}})*[?!.,:;*_~'"]*[\s<])
       pop: 1
     - include: autolink-inet-common
 
@@ -2955,6 +3023,172 @@ contexts:
     - include: images
     - include: literals
     - include: links
+
+###[ EXTENSIONS: MATHJAX ]####################################################
+
+  list-math-blocks:
+    - match: (?=(?:^[ \t]*)?\$\$)
+      branch_point: list-math-blocks
+      branch:
+        - list-math-block-begin
+        - list-math-inline-block-begin
+
+  list-math-block-begin:
+    # Leading and trailing whitespace of standalone math blocks are scoped
+    # `markup.math` in case background color is assigned.
+    - meta_include_prototype: false
+    - match: ^[ \t]*(\$\$)
+      captures:
+        1: text.tex.latex.embedded.markdown
+           meta.environment.math.block.dollar.latex
+           punctuation.definition.math.begin.latex
+      set:
+        - list-math-block-end
+        - list-math-block-content
+    - match: ''
+      fail: list-math-blocks
+
+  list-math-block-end:
+    - meta_include_prototype: false
+    - meta_scope: markup.math.block.markdown
+    - meta_content_scope:
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+    - match: (\$\$)\s*$\n?
+      captures:
+        1: text.tex.latex.embedded.markdown
+           meta.environment.math.block.dollar.latex
+           punctuation.definition.math.end.latex
+      pop: 1
+    - match: ''
+      fail: list-math-blocks
+
+  list-math-inline-block-begin:
+    # Math blocks preceded or followed by normal text are treated as inline raw
+    # code blocks, scoped `markup.math` excluding leading or trailing whitespace.
+    - meta_include_prototype: false
+    - match: \$\$
+      scope: punctuation.definition.math.begin.latex
+      set:
+        - list-math-inline-block-end
+        - list-math-block-content
+
+  list-math-inline-block-end:
+    - meta_include_prototype: false
+    - meta_scope:
+        markup.math.block.markdown
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+    - match: \$\$
+      scope: punctuation.definition.math.end.latex
+      pop: 1
+    - match: ''
+      fail: list-math-blocks
+
+  list-math-block-content:
+    - meta_include_prototype: false
+    - match: ''
+      embed: math-content
+      escape: (?=\$\$)|{{list_paragraph_end}}|{{list_setext_heading_escape}}
+      pop: 1 # embed math once
+
+  math-blocks:
+    - match: (?=(?:^[ ]{,3})?\$\$)
+      branch_point: math-blocks
+      branch:
+        - math-block-begin
+        - math-inline-block-begin
+
+  math-block-begin:
+    # Leading and trailing whitespace of standalone math blocks are scoped
+    # `markup.math` in case background color is assigned.
+    - meta_include_prototype: false
+    - match: ^[ ]{,3}(\$\$)
+      captures:
+        1: text.tex.latex.embedded.markdown
+           meta.environment.math.block.dollar.latex
+           punctuation.definition.math.begin.latex
+      set:
+        - math-block-end
+        - math-block-content
+    - match: ''
+      fail: math-blocks
+
+  math-block-end:
+    - meta_include_prototype: false
+    - meta_scope: markup.math.block.markdown
+    - meta_content_scope:
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+    - match: (\$\$)\s*$\n?
+      captures:
+        1: text.tex.latex.embedded.markdown
+           meta.environment.math.block.dollar.latex
+           punctuation.definition.math.end.latex
+      pop: 1
+    - match: ''
+      fail: math-blocks
+
+  math-inline-block-begin:
+    # Math blocks preceded or followed by normal text are treated as inline raw
+    # code blocks, scoped `markup.math` excluding leading or trailing whitespace.
+    - meta_include_prototype: false
+    - match: \$\$
+      scope: punctuation.definition.math.begin.latex
+      set:
+        - math-inline-blocks-end
+        - math-block-content
+
+  math-inline-blocks-end:
+    - meta_include_prototype: false
+    - meta_scope:
+        markup.math.block.markdown
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+    - match: \$\$
+      scope: punctuation.definition.math.end.latex
+      pop: 1
+    - match: ''
+      fail: math-blocks
+
+  math-block-content:
+    - meta_include_prototype: false
+    - match: ''
+      embed: math-content
+      escape: (?=\$\$)|{{paragraph_end}}|{{setext_heading_escape}}
+      pop: 1 # embed math once
+
+  math-inline:
+    # Consume any remaining $$ to prevent deadlock
+    # (workaround for https://github.com/sublimehq/sublime_text/issues/5415)
+    - match: \$\$
+    - match: |-
+        (?x)
+        # dollar sign not followed by whitespace
+        (\$) (?=\S)
+        # arbitrary number of chars, maybe escaped dollar sign, but no html tags
+        # terminated by non-whitespace, followed by dollar and non-word character
+        (?= (?: \\\\ | \\\$ | (?!</?[A-Za-z]+[ \t]*/?>)[^\$] )*? \S\$\W )
+      scope:
+        markup.math.inline.markdown
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+        punctuation.definition.math.begin.latex
+      embed: math-content
+      embed_scope:
+        markup.math.inline.markdown
+        text.tex.latex.embedded.markdown
+        meta.environment.math.block.dollar.latex
+      escape: '{{no_escape_behind}}\$'
+      escape_captures:
+        0: markup.math.inline.markdown
+           text.tex.latex.embedded.markdown
+           meta.environment.math.block.dollar.latex
+           punctuation.definition.math.end.latex
+
+  math-content:
+    - include: scope:text.tex.latex#macros
+    - include: scope:text.tex.latex#math-content
 
 ###[ PROTOTYPES ]#############################################################
 

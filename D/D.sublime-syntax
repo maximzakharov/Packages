@@ -46,7 +46,7 @@ variables:
   string_lookahead: '(?=`|[rxq]?"|q{)'
 
   definitely_value_lookahead: '(?=!|~|\+|\-|\*|&|\bcast\b|\bdelete\b|\bnew\b|\bimport\b|\bis\b|\b__traits\b|\bfunction\b|\bdelegate\b|[0-9]|\[|\(|{{string_lookahead}}|\b({{language_constant}})\b|\b({{language_variable}})\b)'
-  definitely_declaration_lookahead: '(?=(?:{{name}}\.)*{{name}}(\s+|\s*\*+\s*|\**\[.*\]\s*){{name}}|\b{{type_qualifier}}\b)'
+  definitely_declaration_lookahead: '(?=(?:{{name}}\.)*{{name}}(\s+|\s*\*+\s*|\**\[.*\]\s*){{name}}|\b({{type_qualifier}})\b)'
 
   type_qualifier: 'const|immutable|inout|shared'
   type_qualifier_lookahead: '(?=\b({{type_qualifier}})\b)'
@@ -74,15 +74,31 @@ contexts:
     - include: comment-in
 
   main:
-    - match: '^#!'
-      scope: punctuation.definition.comment.number-sign.d
-      push:
-        - meta_include_prototype: false
-        - meta_scope: comment.line.number-sign.d
-        - match: '$\n?'
-          pop: true
+    - meta_include_prototype: false
+    - match: ''
+      set: [d, shebang]
+
+  shebang:
+    - meta_include_prototype: false
+    - match: ^\#!
+      scope: punctuation.definition.comment.d
+      set: shebang-body
+    - match: ^|(?=\S)  # Note: Ensure to highlight shebang if syntax is embedded.
+      pop: 1
+
+  shebang-body:
+    - meta_include_prototype: false
+    - meta_scope: comment.line.shebang.d
+    # Note: Keep sync with first_line_match!
+    - match: \bg?dmd\b
+      scope: constant.language.shebang.d
+    - match: \n
+      pop: 1
+
+  d:
     - include: module-in
     - include: statement-list-in
+
   module-in:
     - match: \bmodule\b
       scope: keyword.declaration.namespace.d
@@ -1057,8 +1073,13 @@ contexts:
     # function
     - match: '(?=[[:alpha:]0-9_\.]+\s*\()'
       set: value-array-list
+    - match: '\b({{language_constant}})\b'
+      scope: constant.language.d
+      set: first-value-after
+    - match: '\b({{language_variable}})\b'
+      scope: variable.language.d
+      set: first-value-after
     - match: '{{name_lookahead}}'
-      scope: variable.other.d
       set: [first-value-after, value-identifier]
     - match: '(?=\S)'
       set: value-array-list
@@ -1589,9 +1610,8 @@ contexts:
     - match: ','
       scope: punctuation.separator.sequence.d
       set: base-class-list
-    - match: '(?={)'
+    - match: '(?=\S)'
       pop: true
-    - include: not-whitespace-illegal-pop
 
   interface-in:
     - match: '\b(interface)\b'
@@ -2173,6 +2193,7 @@ contexts:
       set: [condition-after, first-value]
     - include: not-whitespace-illegal-pop
   condition-after:
+    - meta_scope: meta.parens.d
     - match: '\)'
       scope: punctuation.section.parens.end.d
       pop: true

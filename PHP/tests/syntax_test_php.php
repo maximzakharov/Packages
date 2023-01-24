@@ -5,6 +5,23 @@
  * PHPDoc Tests
  *****************************************************************************/
 
+/* ?> */
+// <- comment.block.php punctuation.definition.comment.begin.php
+//^^^^ comment.block.php - punctuation
+//    ^^ comment.block.php punctuation.definition.comment.end.php
+
+/* <?php ... ?> */
+// <- comment.block.php punctuation.definition.comment.begin.php
+//^^^^^^^^^^^^^^ comment.block.php - punctuation
+
+// comment ?> <div>
+//^^^^^^^^^^^ text.html.php meta.embedded.php
+//           ^^^^^^^ text.html.php - meta.embedded
+// ^^^^^^^^ comment.line.double-slash.php
+//         ^^ punctuation.section.embedded.end.php
+
+<?php
+
 /**
 //^ comment.block.documentation.phpdoc.php punctuation.definition.comment.begin.php
 // ^ comment.block.documentation.phpdoc.php - punctuation
@@ -945,9 +962,10 @@ $f3 = #[ExampleAttribute] fn () => 1;
  * Class Declaration Tests
  *****************************************************************************/
 
-    class
-//  ^^^^^ meta.class.php keyword.declaration.class.php
-//       ^ meta.class.php - keyword
+    readonly class
+//  ^^^^^^^^ storage.modifier.php
+//           ^^^^^ meta.class.php keyword.declaration.class.php
+//                ^ meta.class.php - keyword
 
     class Test1
 //  ^^^^^^^^^^^^ meta.class.php - meta.block - meta.class meta.class
@@ -963,17 +981,18 @@ $f3 = #[ExampleAttribute] fn () => 1;
 //              ^^^^^^^ storage.modifier.extends.php
 //                      ^^^^^^^^^^ storage.modifier.implements.php
 
-    class Test3 extends stdClass implements Countable {}
+    readonly class Test3 extends stdClass implements Countable {}
 // ^ - meta.class
-//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.class meta.class, - meta.block meta.block
-//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.class.php - meta.block
-//                                                    ^^ meta.class.php meta.block.php
-//  ^^^^^ keyword.declaration.class.php
-//        ^^^^^ entity.name.class.php
-//              ^^^^^^^ storage.modifier.extends.php
-//                      ^^^^^^^^ entity.other.inherited-class.php support.class.builtin.php - meta.path
-//                               ^^^^^^^^^^ storage.modifier.implements.php
-//                                          ^^^^^^^^^ entity.other.inherited-class.php support.class.builtin.php - meta.path
+//           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.class meta.class, - meta.block meta.block
+//           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.class.php - meta.block
+//                                                             ^^ meta.class.php meta.block.php
+//  ^^^^^^^^ storage.modifier.php
+//           ^^^^^ keyword.declaration.class.php
+//                 ^^^^^ entity.name.class.php
+//                       ^^^^^^^ storage.modifier.extends.php
+//                               ^^^^^^^^ entity.other.inherited-class.php support.class.builtin.php - meta.path
+//                                        ^^^^^^^^^^ storage.modifier.implements.php
+//                                                   ^^^^^^^^^ entity.other.inherited-class.php support.class.builtin.php - meta.path
 
     class Test4 extends Foo, Bar implements Foo, Bar {}
 // ^ - meta.class
@@ -1009,7 +1028,7 @@ $f3 = #[ExampleAttribute] fn () => 1;
 //                                           ^ punctuation.accessor.namespace.php
 
     ABSTRACT CLASS /**/ #[Anno] /**/ Test6 /**/ EXTENDS /**/ #[Anno] /**/ \My\Foo /**/ IMPLEMENTS /**/ #[Anno] /**/ Bar /**/, /**/ Baz /**/ {  }
-//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.class.php
+//           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.class.php
 //  ^^^^^^^^ storage.modifier.php
 //           ^^^^^ keyword.declaration.class.php
 //                 ^^^^ comment.block.php
@@ -1550,6 +1569,71 @@ class B
 
 class TestTypedProperties {
 
+    public ;
+//  ^^^^^^ storage.modifier.access.php
+//        ^^ - meta.type
+//         ^ punctuation.terminator.statement.php
+
+    public ( ;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php meta.group.php
+//           ^ punctuation.terminator.statement.php - meta.type
+
+    public ? ;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php
+//         ^ storage.type.nullable.php
+//           ^ punctuation.terminator.statement.php - meta.type
+
+    public & ;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php
+//         ^ punctuation.separator.type.intersection.php
+//           ^ punctuation.terminator.statement.php - meta.type
+
+    public | ;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php
+//         ^ punctuation.separator.type.union.php
+//           ^ punctuation.terminator.statement.php - meta.type
+
+    public $var;
+//  ^^^^^^ storage.modifier.access.php
+//        ^^^^^ - meta.type
+//         ^^^^ variable.other.php
+//             ^ punctuation.terminator.statement.php
+
+    public ( $var;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php meta.group.php
+//           ^^^^^ - meta.type
+//           ^^^^ variable.other.php
+//               ^ punctuation.terminator.statement.php
+
+    public ? $var;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php
+//           ^^^^^ - meta.type
+//         ^ storage.type.nullable.php
+//           ^^^^ variable.other.php
+//               ^ punctuation.terminator.statement.php
+
+    public & $var;
+//  ^^^^^^ storage.modifier.access.php
+//        ^^^^^^^ - meta.type
+//         ^ - punctuation.separator.type.intersection
+//           ^^^^ variable.other.php
+//               ^ punctuation.terminator.statement.php
+
+    public | $var;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^ meta.type.php
+//           ^^^^^ - meta.type
+//         ^ punctuation.separator.type.union.php
+//           ^^^^ variable.other.php
+//               ^ punctuation.terminator.statement.php
+
+
     public static ?Foo $str = '';
 //  ^^^^^^ storage.modifier.access.php
 //         ^^^^^^ storage.modifier.namespace.php
@@ -1925,6 +2009,27 @@ function foo(?stinrg ...$args) {}
 //                   ^^^ keyword.operator.variadic
 //                      ^^^^^ variable.parameter
 
+    // incomplete and therefore invalid code to illustrate reference operator precedence
+    function &typedParameterReferences(int & C &$v, bool & $new, ?string | $str) {}
+//  ^ keyword.declaration.function.php
+//           ^ keyword.operator.reference.php
+//            ^ entity.name.function.php
+//                                    ^ punctuation.section.group.begin.php
+//                                     ^^^ storage.type.primitive.php
+//                                         ^ punctuation.separator.type.intersection.php
+//                                           ^ support.class.php
+//                                             ^ keyword.operator.reference.php
+//                                              ^^ variable.parameter.php
+//                                                ^ punctuation.separator.sequence.php
+//                                                  ^^^^ storage.type.primitive.php
+//                                                       ^ keyword.operator.reference.php
+//                                                         ^^^^ variable.parameter.php
+//                                                             ^ punctuation.separator.sequence.php
+//                                                               ^ storage.type.nullable.php
+//                                                                ^^^^^^ storage.type.primitive.php
+//                                                                       ^ punctuation.separator.type.union.php
+//                                                                         ^^^^ variable.parameter.php
+//                                                                             ^ punctuation.section.group.end.php
 
     function noReturnType(array $param1, int $param2) {}
 //  ^ keyword.declaration.function
@@ -1986,6 +2091,106 @@ function foo(?stinrg ...$args) {}
 //                                                              ^ punctuation.separator.type.intersection
 //                                                                ^^^^^^^^^^ support.class
 
+    function incompleteParamTypesFunction(
+
+        $param0,
+//      ^^^^^^^ variable.parameter.php
+//             ^ punctuation.separator.sequence.php
+
+        ? $param1,
+//      ^^ meta.type.php
+//        ^^^^^^^ - meta.type
+//      ^ storage.type.nullable.php
+//        ^^^^^^^ variable.parameter.php
+//               ^ punctuation.separator.sequence.php
+
+        & $param2,
+//      ^^^^^^^^^ - meta.type
+//      ^ keyword.operator.reference.php
+//        ^^^^^^^ variable.parameter.php
+//               ^ punctuation.separator.sequence.php
+
+        | $param3,
+//      ^^ meta.type.php
+//        ^^^^^^^ - meta.type
+//      ^ punctuation.separator.type.union.php
+//        ^^^^^^^ variable.parameter.php
+//               ^ punctuation.separator.sequence.php
+
+        ( $param4,
+//      ^^ meta.type.php meta.group.php
+//        ^^^^^^^ - meta.type
+//      ^ punctuation.section.group.begin.php
+//        ^^^^^^^ variable.parameter.php
+//        ^ punctuation.definition.variable.php
+//               ^ punctuation.separator.sequence.php
+
+        () $param5,
+//      ^^ meta.type.php meta.group.php
+//        ^ meta.type.php - meta.type meta.group
+//         ^^^^^^^ - meta.type
+//      ^ punctuation.section.group.begin.php
+//       ^ punctuation.section.group.end.php
+//         ^^^^^^^ variable.parameter.php
+//                ^ punctuation.separator.sequence.php
+
+        ...$param1,
+//      ^^^ keyword.operator.variadic.php
+//         ^^^^^^^ variable.parameter.php
+//                ^ punctuation.separator.sequence.php
+
+        ? ...$param2,
+//      ^^ meta.type.php
+//        ^^^^^^^^^^^ - meta.type
+//      ^ storage.type.nullable.php
+//        ^^^ keyword.operator.variadic.php
+//           ^^^^^^^ variable.parameter.php
+//                  ^ punctuation.separator.sequence.php
+
+        & ...$param3,
+//      ^^ meta.type.php
+//        ^^^^^^^^^^^ - meta.type
+//      ^ punctuation.separator.type.intersection.php
+//        ^^^ keyword.operator.variadic.php
+//           ^^^^^^^ variable.parameter.php
+//                  ^ punctuation.separator.sequence.php
+
+        | ...$param4,
+//      ^^ meta.type.php
+//        ^^^^^^^^^^^ - meta.type
+//      ^ punctuation.separator.type.union.php
+//        ^^^ keyword.operator.variadic.php
+//           ^^^^^^^ variable.parameter.php
+//                  ^ punctuation.separator.sequence.php
+
+        ( ...$param5,
+//      ^^ meta.type.php meta.group.php
+//        ^^^^^^^^^^^ - meta.type
+//      ^ punctuation.section.group.begin.php
+//        ^^^ keyword.operator.variadic.php
+//           ^^^^^^^ variable.parameter.php
+//           ^ punctuation.definition.variable.php
+//                  ^ punctuation.separator.sequence.php
+
+        () ...$param6,
+//      ^^ meta.type.php meta.group.php
+//        ^ meta.type.php - meta.type meta.group
+//         ^^^^^^^^^^^ - meta.type
+//      ^ punctuation.section.group.begin.php
+//       ^ punctuation.section.group.end.php
+//         ^^^ keyword.operator.variadic.php
+//            ^^^^^^^ variable.parameter.php
+//                   ^ punctuation.separator.sequence.php
+
+        bool $param0 string $param2,
+//      ^^^^ storage.type.primitive.php
+//           ^^^^^^^ variable.parameter.php
+//                   ^^^^^^ storage.type.primitive.php
+//                          ^^^^^^^ variable.parameter.php
+//                                 ^ punctuation.separator.sequence.php
+
+    ): {}
+
     function unionTypeFunction(
 //  ^ keyword.declaration.function
 //           ^ entity.name.function.php
@@ -2017,6 +2222,47 @@ function foo(?stinrg ...$args) {}
 //                    ^^^ storage.type
 //                        ^ punctuation.definition.variable
 //                         ^^^^^^ variable.parameter
+        (?A|B)&(C|?D)&?E $param2,
+//      ^ punctuation.section.group.begin
+//       ^ storage.type.nullable
+//        ^ support.class
+//         ^ punctuation.separator.type.union
+//          ^ support.class
+//           ^ punctuation.section.group.end
+//            ^ punctuation.separator.type.intersection
+//             ^ punctuation.section.group.begin
+//              ^ support.class
+//               ^ punctuation.separator.type.union
+//                ^ storage.type.nullable
+//                 ^ support.class
+//                  ^ punctuation.section.group.end
+//                   ^ punctuation.separator.type.intersection
+//                    ^ storage.type.nullable
+//                     ^ support.class
+//                       ^ punctuation.definition.variable
+//                        ^^^^^^ variable.parameter
+
+        (?A/**/|/**/B/**/)/**/&/**/(/**/C/**/|/**/?D/**/)/**/&/**/?E $param2,
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.type.php
+//                                                                   ^^^^^^^^^ - meta.type
+//      ^ punctuation.section.group.begin
+//       ^ storage.type.nullable
+//        ^ support.class
+//             ^ punctuation.separator.type.union
+//                  ^ support.class
+//                       ^ punctuation.section.group.end
+//                            ^ punctuation.separator.type.intersection
+//                                 ^ punctuation.section.group.begin
+//                                      ^ support.class
+//                                           ^ punctuation.separator.type.union
+//                                                ^ storage.type.nullable
+//                                                 ^ support.class
+//                                                      ^ punctuation.section.group.end
+//                                                           ^ punctuation.separator.type.intersection
+//                                                                ^ storage.type.nullable
+//                                                                 ^ support.class
+//                                                                   ^ punctuation.definition.variable
+//                                                                    ^^^^^^ variable.parameter
         string $param3,
 //      ^^^^^^ storage.type
 //             ^ punctuation.definition.variable
@@ -2044,6 +2290,26 @@ function testGenerator1()
 //  ^^^^^ keyword.control.flow.yield.php
 //        ^ constant.numeric.value.php
 //         ^ punctuation.terminator.statement.php
+
+   (yield);
+// ^^^^^^^ meta.group.php
+// ^ punctuation.section.group.begin.php
+//  ^^^^^ keyword.control.flow.yield.php
+//       ^ punctuation.section.group.end.php
+//        ^ punctuation.terminator.statement.php
+
+   [yield];
+// ^^^^^^^ meta.sequence.array.php
+// ^ punctuation.section.sequence.begin.php
+//  ^^^^^ keyword.control.flow.yield.php
+//       ^ punctuation.section.sequence.end.php
+//        ^ punctuation.terminator.statement.php
+
+    $send = yield $value;
+//  ^^^^^ variable.other.php
+//        ^ keyword.operator.assignment.php
+//          ^^^^^ keyword.control.flow.yield.php
+//                ^^^^^^ variable.other.php
 }
 
 function testGenerator2()
@@ -2055,6 +2321,14 @@ function testGenerator2()
 //                           ^ punctuation.section.group.begin.php
 //                            ^ punctuation.section.group.end.php
 //                             ^ punctuation.terminator.statement.php
+
+    $a = yield from test(1);
+//  ^^ variable.other.php
+//     ^ keyword.operator.assignment.php
+//       ^^^^^ keyword.control.flow.yield.php
+//             ^^^^ keyword.control.flow.yield.php
+//                  ^^^^ meta.function-call.identifier.php variable.function.php
+//                      ^^^ meta.function-call.arguments.php meta.group.php
 }
 
 
@@ -3891,7 +4165,7 @@ $var4 = 0b0_1_1_1;
 //                                                              ^^ constant.character.escape.php - punctuation
 //                                                                ^ - constant
 
-    'format: %5$- .9f | %-.9g | %+0d | %'ff'
+    'format: %5$- .9f | %-.9g | %+0d | %\'ff'
 //           ^ punctuation.definition.placeholder.php
 //           ^^^^^^^^ constant.other.placeholder.php
 //                   ^^^ - constant
@@ -3903,7 +4177,7 @@ $var4 = 0b0_1_1_1;
 //                              ^^^^ constant.other.placeholder.php
 //                                  ^^^ - constant
 //                                     ^ punctuation.definition.placeholder.php
-//                                     ^^^^ constant.other.placeholder.php
+//                                     ^^^^^ constant.other.placeholder.php
 
     "format: %5$- .9f | %-.9g | %+0d | %'ff"
 //           ^ punctuation.definition.placeholder.php
@@ -3933,6 +4207,251 @@ $var4 = 0b0_1_1_1;
 //   ^^^^^^ constant.other.placeholder.php
    "[%-10.9s]"  // left-justification but with a cutoff of 8 characters
 //   ^^^^^^^ constant.other.placeholder.php
+
+   // https://www.php.net/manual/en/function.strftime
+   'strftime: %a %A %d %e %j %u %w %U %V %W %b %B %h %m %C %g %G %y %Y %H %k %I %l %M %p %P %r %R %S %T %X %z %Z %c %D %F %s %x %n %t'
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php string.quoted.single.php
+//            ^ punctuation.definition.placeholder.php
+//            ^^ constant.other.placeholder.php
+//              ^ - constant.other.placeholder - punctuation
+//               ^ punctuation.definition.placeholder.php
+//               ^^ constant.other.placeholder.php
+//                 ^ - constant.other.placeholder - punctuation
+//                  ^ punctuation.definition.placeholder.php
+//                  ^^ constant.other.placeholder.php
+//                    ^ - constant.other.placeholder - punctuation
+//                     ^ punctuation.definition.placeholder.php
+//                     ^^ constant.other.placeholder.php
+//                       ^ - constant.other.placeholder - punctuation
+//                        ^ punctuation.definition.placeholder.php
+//                        ^^ constant.other.placeholder.php
+//                          ^ - constant.other.placeholder - punctuation
+//                           ^ punctuation.definition.placeholder.php
+//                           ^^ constant.other.placeholder.php
+//                             ^ - constant.other.placeholder - punctuation
+//                              ^ punctuation.definition.placeholder.php
+//                              ^^ constant.other.placeholder.php
+//                                ^ - constant.other.placeholder - punctuation
+//                                 ^ punctuation.definition.placeholder.php
+//                                 ^^ constant.other.placeholder.php
+//                                   ^ - constant.other.placeholder - punctuation
+//                                    ^ punctuation.definition.placeholder.php
+//                                    ^^ constant.other.placeholder.php
+//                                      ^ - constant.other.placeholder - punctuation
+//                                       ^ punctuation.definition.placeholder.php
+//                                       ^^ constant.other.placeholder.php
+//                                         ^ - constant.other.placeholder - punctuation
+//                                          ^ punctuation.definition.placeholder.php
+//                                          ^^ constant.other.placeholder.php
+//                                            ^ - constant.other.placeholder - punctuation
+//                                             ^ punctuation.definition.placeholder.php
+//                                             ^^ constant.other.placeholder.php
+//                                               ^ - constant.other.placeholder - punctuation
+//                                                ^ punctuation.definition.placeholder.php
+//                                                ^^ constant.other.placeholder.php
+//                                                  ^ - constant.other.placeholder - punctuation
+//                                                   ^ punctuation.definition.placeholder.php
+//                                                   ^^ constant.other.placeholder.php
+//                                                     ^ - constant.other.placeholder - punctuation
+//                                                      ^ punctuation.definition.placeholder.php
+//                                                      ^^ constant.other.placeholder.php
+//                                                        ^ - constant.other.placeholder - punctuation
+//                                                         ^ punctuation.definition.placeholder.php
+//                                                         ^^ constant.other.placeholder.php
+//                                                           ^ - constant.other.placeholder - punctuation
+//                                                            ^ punctuation.definition.placeholder.php
+//                                                            ^^ constant.other.placeholder.php
+//                                                              ^ - constant.other.placeholder - punctuation
+//                                                               ^^ constant.other.placeholder.php
+//                                                                 ^ - constant.other.placeholder - punctuation
+//                                                                  ^ punctuation.definition.placeholder.php
+//                                                                  ^^ constant.other.placeholder.php
+//                                                                    ^ - constant.other.placeholder - punctuation
+//                                                                     ^ punctuation.definition.placeholder.php
+//                                                                     ^^ constant.other.placeholder.php
+//                                                                       ^ - constant.other.placeholder - punctuation
+//                                                                        ^ punctuation.definition.placeholder.php
+//                                                                        ^^ constant.other.placeholder.php
+//                                                                          ^ - constant.other.placeholder - punctuation
+//                                                                           ^ punctuation.definition.placeholder.php
+//                                                                           ^^ constant.other.placeholder.php
+//                                                                             ^ - constant.other.placeholder - punctuation
+//                                                                              ^ punctuation.definition.placeholder.php
+//                                                                              ^^ constant.other.placeholder.php
+//                                                                                ^ - constant.other.placeholder - punctuation
+//                                                                                 ^ punctuation.definition.placeholder.php
+//                                                                                 ^^ constant.other.placeholder.php
+//                                                                                   ^ - constant.other.placeholder - punctuation
+//                                                                                    ^ punctuation.definition.placeholder.php
+//                                                                                    ^^ constant.other.placeholder.php
+//                                                                                      ^ - constant.other.placeholder - punctuation
+//                                                                                       ^ punctuation.definition.placeholder.php
+//                                                                                       ^^ constant.other.placeholder.php
+//                                                                                         ^ - constant.other.placeholder - punctuation
+//                                                                                          ^ punctuation.definition.placeholder.php
+//                                                                                          ^^ constant.other.placeholder.php
+//                                                                                            ^ - constant.other.placeholder - punctuation
+//                                                                                             ^ punctuation.definition.placeholder.php
+//                                                                                             ^^ constant.other.placeholder.php
+//                                                                                               ^ - constant.other.placeholder - punctuation
+//                                                                                                ^ punctuation.definition.placeholder.php
+//                                                                                                ^^ constant.other.placeholder.php
+//                                                                                                  ^ - constant.other.placeholder - punctuation
+//                                                                                                   ^ punctuation.definition.placeholder.php
+//                                                                                                   ^^ constant.other.placeholder.php
+//                                                                                                     ^ - constant.other.placeholder - punctuation
+//                                                                                                      ^ punctuation.definition.placeholder.php
+//                                                                                                      ^^ constant.other.placeholder.php
+//                                                                                                        ^ - constant.other.placeholder - punctuation
+//                                                                                                         ^ punctuation.definition.placeholder.php
+//                                                                                                         ^^ constant.other.placeholder.php
+//                                                                                                           ^ - constant.other.placeholder - punctuation
+//                                                                                                            ^ punctuation.definition.placeholder.php
+//                                                                                                            ^^ constant.other.placeholder.php
+//                                                                                                              ^ - constant.other.placeholder - punctuation
+//                                                                                                               ^ punctuation.definition.placeholder.php
+//                                                                                                               ^^ constant.other.placeholder.php
+//                                                                                                                 ^ - constant.other.placeholder - punctuation
+//                                                                                                                  ^ punctuation.definition.placeholder.php
+//                                                                                                                  ^^ constant.other.placeholder.php
+//                                                                                                                    ^ - constant.other.placeholder - punctuation
+//                                                                                                                     ^^ constant.other.placeholder.php
+//                                                                                                                       ^ - constant.other.placeholder - punctuation
+//                                                                                                                        ^^ constant.other.placeholder.php
+//                                                                                                                          ^ - constant.other.placeholder - punctuation
+//                                                                                                                           ^ punctuation.definition.placeholder.php
+//                                                                                                                           ^^ constant.other.placeholder.php
+//                                                                                                                             ^ - constant.other.placeholder - punctuation
+//                                                                                                                              ^ punctuation.definition.placeholder.php
+//                                                                                                                              ^^ constant.other.placeholder.php
+//                                                                                                                                ^ - constant.other.placeholder - punctuation
+//                                                                                                                                 ^^ constant.other.placeholder.php
+//                                                                                                                                   ^ - constant
+
+
+   "strftime: %a %A %d %e %j %u %w %U %V %W %b %B %h %m %C %g %G %y %Y %H %k %I %l %M %p %P %r %R %S %T %X %z %Z %c %D %F %s %x %n %t"
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php string.quoted.double.php
+//            ^ punctuation.definition.placeholder.php
+//            ^^ constant.other.placeholder.php
+//              ^ - constant.other.placeholder - punctuation
+//               ^ punctuation.definition.placeholder.php
+//               ^^ constant.other.placeholder.php
+//                 ^ - constant.other.placeholder - punctuation
+//                  ^ punctuation.definition.placeholder.php
+//                  ^^ constant.other.placeholder.php
+//                    ^ - constant.other.placeholder - punctuation
+//                     ^ punctuation.definition.placeholder.php
+//                     ^^ constant.other.placeholder.php
+//                       ^ - constant.other.placeholder - punctuation
+//                        ^ punctuation.definition.placeholder.php
+//                        ^^ constant.other.placeholder.php
+//                          ^ - constant.other.placeholder - punctuation
+//                           ^ punctuation.definition.placeholder.php
+//                           ^^ constant.other.placeholder.php
+//                             ^ - constant.other.placeholder - punctuation
+//                              ^ punctuation.definition.placeholder.php
+//                              ^^ constant.other.placeholder.php
+//                                ^ - constant.other.placeholder - punctuation
+//                                 ^ punctuation.definition.placeholder.php
+//                                 ^^ constant.other.placeholder.php
+//                                   ^ - constant.other.placeholder - punctuation
+//                                    ^ punctuation.definition.placeholder.php
+//                                    ^^ constant.other.placeholder.php
+//                                      ^ - constant.other.placeholder - punctuation
+//                                       ^ punctuation.definition.placeholder.php
+//                                       ^^ constant.other.placeholder.php
+//                                         ^ - constant.other.placeholder - punctuation
+//                                          ^ punctuation.definition.placeholder.php
+//                                          ^^ constant.other.placeholder.php
+//                                            ^ - constant.other.placeholder - punctuation
+//                                             ^ punctuation.definition.placeholder.php
+//                                             ^^ constant.other.placeholder.php
+//                                               ^ - constant.other.placeholder - punctuation
+//                                                ^ punctuation.definition.placeholder.php
+//                                                ^^ constant.other.placeholder.php
+//                                                  ^ - constant.other.placeholder - punctuation
+//                                                   ^ punctuation.definition.placeholder.php
+//                                                   ^^ constant.other.placeholder.php
+//                                                     ^ - constant.other.placeholder - punctuation
+//                                                      ^ punctuation.definition.placeholder.php
+//                                                      ^^ constant.other.placeholder.php
+//                                                        ^ - constant.other.placeholder - punctuation
+//                                                         ^ punctuation.definition.placeholder.php
+//                                                         ^^ constant.other.placeholder.php
+//                                                           ^ - constant.other.placeholder - punctuation
+//                                                            ^ punctuation.definition.placeholder.php
+//                                                            ^^ constant.other.placeholder.php
+//                                                              ^ - constant.other.placeholder - punctuation
+//                                                               ^^ constant.other.placeholder.php
+//                                                                 ^ - constant.other.placeholder - punctuation
+//                                                                  ^ punctuation.definition.placeholder.php
+//                                                                  ^^ constant.other.placeholder.php
+//                                                                    ^ - constant.other.placeholder - punctuation
+//                                                                     ^ punctuation.definition.placeholder.php
+//                                                                     ^^ constant.other.placeholder.php
+//                                                                       ^ - constant.other.placeholder - punctuation
+//                                                                        ^ punctuation.definition.placeholder.php
+//                                                                        ^^ constant.other.placeholder.php
+//                                                                          ^ - constant.other.placeholder - punctuation
+//                                                                           ^ punctuation.definition.placeholder.php
+//                                                                           ^^ constant.other.placeholder.php
+//                                                                             ^ - constant.other.placeholder - punctuation
+//                                                                              ^ punctuation.definition.placeholder.php
+//                                                                              ^^ constant.other.placeholder.php
+//                                                                                ^ - constant.other.placeholder - punctuation
+//                                                                                 ^ punctuation.definition.placeholder.php
+//                                                                                 ^^ constant.other.placeholder.php
+//                                                                                   ^ - constant.other.placeholder - punctuation
+//                                                                                    ^ punctuation.definition.placeholder.php
+//                                                                                    ^^ constant.other.placeholder.php
+//                                                                                      ^ - constant.other.placeholder - punctuation
+//                                                                                       ^ punctuation.definition.placeholder.php
+//                                                                                       ^^ constant.other.placeholder.php
+//                                                                                         ^ - constant.other.placeholder - punctuation
+//                                                                                          ^ punctuation.definition.placeholder.php
+//                                                                                          ^^ constant.other.placeholder.php
+//                                                                                            ^ - constant.other.placeholder - punctuation
+//                                                                                             ^ punctuation.definition.placeholder.php
+//                                                                                             ^^ constant.other.placeholder.php
+//                                                                                               ^ - constant.other.placeholder - punctuation
+//                                                                                                ^ punctuation.definition.placeholder.php
+//                                                                                                ^^ constant.other.placeholder.php
+//                                                                                                  ^ - constant.other.placeholder - punctuation
+//                                                                                                   ^ punctuation.definition.placeholder.php
+//                                                                                                   ^^ constant.other.placeholder.php
+//                                                                                                     ^ - constant.other.placeholder - punctuation
+//                                                                                                      ^ punctuation.definition.placeholder.php
+//                                                                                                      ^^ constant.other.placeholder.php
+//                                                                                                        ^ - constant.other.placeholder - punctuation
+//                                                                                                         ^ punctuation.definition.placeholder.php
+//                                                                                                         ^^ constant.other.placeholder.php
+//                                                                                                           ^ - constant.other.placeholder - punctuation
+//                                                                                                            ^ punctuation.definition.placeholder.php
+//                                                                                                            ^^ constant.other.placeholder.php
+//                                                                                                              ^ - constant.other.placeholder - punctuation
+//                                                                                                               ^ punctuation.definition.placeholder.php
+//                                                                                                               ^^ constant.other.placeholder.php
+//                                                                                                                 ^ - constant.other.placeholder - punctuation
+//                                                                                                                  ^ punctuation.definition.placeholder.php
+//                                                                                                                  ^^ constant.other.placeholder.php
+//                                                                                                                    ^ - constant.other.placeholder - punctuation
+//                                                                                                                     ^^ constant.other.placeholder.php
+//                                                                                                                       ^ - constant.other.placeholder - punctuation
+//                                                                                                                        ^^ constant.other.placeholder.php
+//                                                                                                                          ^ - constant.other.placeholder - punctuation
+//                                                                                                                           ^ punctuation.definition.placeholder.php
+//                                                                                                                           ^^ constant.other.placeholder.php
+//                                                                                                                             ^ - constant.other.placeholder - punctuation
+//                                                                                                                              ^ punctuation.definition.placeholder.php
+//                                                                                                                              ^^ constant.other.placeholder.php
+//                                                                                                                                ^ - constant.other.placeholder - punctuation
+//                                                                                                                                 ^^ constant.other.placeholder.php
+//                                                                                                                                   ^ - constant
+
+    'foo "%'.urldecode($_REQUEST['searchterm']);
+//  ^^^^^^^^ meta.string.php string.quoted.single.php - constant.other.placeholder
+//          ^ keyword.operator.concatenation.php
+//           ^^^^^^^^^ support.function.url.php
 
     '$a then $b->c or ${d} with {$e} then $f[0] followed by $g[$h] or $i[k] and finally {$l . $m->n . o}'
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php string.quoted.single.php - meta.interpolation
@@ -4533,6 +5052,36 @@ $sql = "
 ";
 // <- meta.string.php string.quoted.double.php punctuation.definition.string.end.php - meta.interpolation - string string
 
+$sql = "SELECT * FROM users where first_name = $user_name";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                             ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                       ^ meta.string.php - meta.interpolation
+
+$sql = "SELECT * FROM users where first_name = '$user_name'";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                              ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                        ^ meta.string.php - meta.interpolation
+
+$sql = "SELECT * FROM users where first_name = `$user_name`";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                              ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                        ^ meta.string.php - meta.interpolation
+
+$sql = "SELECT * FROM users where first_name = %r{^$user_name}";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                                 ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                           ^^ meta.string.php - meta.interpolation
+
+$sql = "SELECT * FROM users where first_name LIKE $user_name";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                                ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                          ^ meta.string.php - meta.interpolation
+
+$sql = "SELECT * FROM users where first_name LIKE '$user_name'";
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php - meta.interpolation
+//                                                 ^^^^^^^^^^ meta.string.php meta.interpolation.php variable.other.php - string
+//                                                           ^ meta.string.php - meta.interpolation
+
 $sql = "SELECT " . $col . "FROM $table WHERE ( first_name =" . $name . ")" ; . "GROUP BY" ;
 //     ^ meta.string.php - meta.interpolation
 //      ^^^^^^^ meta.string.php source.sql.embedded.php
@@ -4579,6 +5128,11 @@ $sql = "WITH RECURSION SELECT *";
 //     ^ meta.string.php string.quoted.double.php punctuation.definition.string.begin.php
 //      ^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php source.sql.embedded.php
 //                             ^ meta.string.php string.quoted.double.php punctuation.definition.string.end.php
+
+
+/******************************************************************************
+ * SQL String Tests without interpolation
+ *****************************************************************************/
 
 $non_sql = 'NO SELECT HIGHLIGHTING!';
 //         ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php string.quoted.single.php - meta.interpolation - string string
@@ -5134,6 +5688,13 @@ function embedHtml() {
 //                                                 ^^ punctuation.section.embedded.end
 //                                                             ^^ punctuation.definition.tag.end.html
 
+<tag <? echo $attr; ?> = <? echo $value; ?> >
+//^^^ meta.tag - meta.attribute-with-value
+//   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.tag meta.attribute-with-value.html
+//                                         ^^ meta.tag - meta.attribute-with-value
+//   ^^^^^^^^^^^^^^^^^ meta.embedded.php
+//                     ^ punctuation.separator.key-value.html
+//                       ^^^^^^^^^^^^^^^^^^ meta.string.html meta.embedded.php
 
 <div class="test <?= $foo ?>"></div>
 //   ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.class.html
@@ -5259,6 +5820,35 @@ h1 {
 // <- text.html.php source.css.embedded punctuation.section.block.end.css
 
 </style>
+
+<p style="color: <?php echo "red" ?>">text</p>
+//       ^ meta.attribute-with-value.style.html meta.string.html string.quoted.double.html punctuation.definition.string.begin.html - meta.interpolation
+//        ^^^^^^^ meta.attribute-with-value.style.html meta.string.html meta.interpolation.html source.css.embedded.html - meta.embedded.php
+//               ^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.style.html meta.string.html meta.interpolation.html source.css.embedded.html meta.embedded.php
+//                                  ^ meta.attribute-with-value.style.html meta.string.html string.quoted.double.html punctuation.definition.string.end.html - meta.interpolation
+//                                   ^ text.html.php meta.tag.block.any.html punctuation.definition.tag.end.html
+
+<p style='color: <?php echo 'red' ?>'>text</p>
+//       ^ meta.attribute-with-value.style.html meta.string.html string.quoted.single.html punctuation.definition.string.begin.html - meta.interpolation
+//        ^^^^^^^ meta.attribute-with-value.style.html meta.string.html meta.interpolation.html source.css.embedded.html - meta.embedded.php
+//               ^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.style.html meta.string.html meta.interpolation.html source.css.embedded.html meta.embedded.php
+//                                  ^ meta.attribute-with-value.style.html meta.string.html string.quoted.single.html punctuation.definition.string.end.html - meta.interpolation
+//                                   ^ text.html.php meta.tag.block.any.html punctuation.definition.tag.end.html
+
+<p onclick="foo(<?php echo "red" ?>)">text</p>
+//         ^ meta.attribute-with-value.event.html meta.string.html string.quoted.double.html punctuation.definition.string.begin.html - meta.interpolation
+//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call.js
+//                                  ^ meta.attribute-with-value.event.html meta.string.html string.quoted.double.html punctuation.definition.string.end.html - meta.interpolation
+
+<p onclick='foo(<?php echo 'red' ?>)'>text</p>
+//         ^ meta.attribute-with-value.event.html meta.string.html string.quoted.single.html punctuation.definition.string.begin.html - meta.interpolation
+//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call.js
+//                                  ^ meta.attribute-with-value.event.html meta.string.html string.quoted.single.html punctuation.definition.string.end.html - meta.interpolation
+
+<![CDATA[Text with <? $php ?> interpolation.]]>
+//       ^^^^^^^^^^ meta.tag.sgml.cdata.html meta.string.html string.unquoted.cdata.html
+//                 ^^^^^^^^^^ meta.tag.sgml.cdata.html meta.string.html meta.embedded.php - string
+//                           ^^^^^^^^^^^^^^^ meta.tag.sgml.cdata.html meta.string.html string.unquoted.cdata.html
 
   <?phpzzzz
 //^^ punctuation.section.embedded.begin.php
