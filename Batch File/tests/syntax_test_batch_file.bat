@@ -104,13 +104,74 @@ ECHO : Not a comment ^
 :: <- - comment
 ::^^^^^^^^^^^^  - comment
 
+:::: [ @ Operator ] :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+   @
+:: ^ keyword.operator.at.dosbatch
+
+   @::comment
+:: ^ keyword.operator.at.dosbatch
+::  ^^^^^^^^^^ comment.line.colon.dosbatch
+
+   @:label
+:: ^ keyword.operator.at.dosbatch
+::  ^^^^^^ entity.name.label.dosbatch
+::  ^ punctuation.definition.label.dosbatch
+
+   @ :label
+:: ^ keyword.operator.at.dosbatch
+::   ^^^^^^ entity.name.label.dosbatch
+::   ^ punctuation.definition.label.dosbatch
+
+   @:@@@@@
+:: ^ keyword.operator.at.dosbatch
+::  ^^^^^^ entity.name.label.dosbatch
+::  ^ punctuation.definition.label.dosbatch
+
+   @ :@@@@@
+:: ^ keyword.operator.at.dosbatch
+::   ^^^^^^ entity.name.label.dosbatch
+::   ^ punctuation.definition.label.dosbatch
 
    @ECHO OFF
 :: ^ keyword.operator.at.dosbatch
+::  ^^^^ support.function.builtin.dosbatch
 
-   @
-:: ^ - keyword.operator.at.dosbatch
+   @ ECHO OFF
+:: ^ keyword.operator.at.dosbatch
+::   ^^^^ support.function.builtin.dosbatch
 
+   @ @ @@ ECHO OFF
+:: ^ keyword.operator.at.dosbatch
+::   ^ keyword.operator.at.dosbatch
+::     ^^ keyword.operator.at.dosbatch
+::        ^^^^ support.function.builtin.dosbatch
+
+   IF "%1"=="--debug" (@echo off) ELSE (@ @ GOTO :EOF)
+::                     ^ keyword.operator.at.dosbatch
+::                      ^^^^ support.function.builtin.dosbatch
+::                                      ^ keyword.operator.at.dosbatch
+::                                        ^ keyword.operator.at.dosbatch
+::                                          ^^^^ keyword.control.flow.goto.dosbatch
+
+   @(goto) 2>nul || @(title %ComSpec%)
+:: ^ keyword.operator.at.dosbatch
+::  ^^^^^^ meta.block.dosbatch
+::                  ^ keyword.operator.at.dosbatch
+::                   ^^^^^^^^^^^^^^^^^ meta.block.dosbatch
+
+   E@CHO john.doe@email.com
+::  ^ - keyword-operator
+::               ^ - keyword-operator
+
+   dir @logs
+::     ^ - keyword-operator
+
+   dir C:\@logs
+::        ^ - keyword-operator
+
+   my @
+::    ^ - keyword-operator
 
 :::: [ Labels ] :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1480,9 +1541,6 @@ put arg1 arg2
 
 :::: [ ECHO Command ] :::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-   @
-:: ^ - keyword.operator.at.dosbatch
-
    ECHO || ECHO && ECHO &
 :: ^^^^ support.function.builtin.dosbatch
 ::      ^^ keyword.operator.logical.dosbatch
@@ -1722,7 +1780,8 @@ put arg1 arg2
    ECHO %% ^^! ^& ^| ^( ^)
 ::      ^^^^^^^^^^^^^^^^^^ meta.string.dosbatch string.unquoted.dosbatch
 ::      ^^ constant.character.escape.dosbatch
-::         ^^^ constant.character.escape.dosbatch
+::         ^^ constant.character.escape.dosbatch
+::           ^ - constant.character
 ::             ^^ constant.character.escape.dosbatch
 ::                ^^ constant.character.escape.dosbatch
 ::                   ^^ constant.character.escape.dosbatch
@@ -1755,12 +1814,30 @@ put arg1 arg2
    ECHO "%% ^^! ^& ^| ^( ^)"
 ::      ^^^^^^^^^^^^^^^^^^^^ meta.string.dosbatch string.unquoted.dosbatch - punctuation
 ::       ^^ constant.character.escape.dosbatch
-::          ^^ constant.character.escape.dosbatch
-::              ^^ constant.character.escape.dosbatch
-::                 ^^ constant.character.escape.dosbatch
-::                    ^^ constant.character.escape.dosbatch
-::                       ^^ constant.character.escape.dosbatch
+::         ^^^^^^^^^^^^^^^^ - constant.character
 
+   doskey cd = @( ^
+   for %%^^^^ in ("") do @for /f "delims=" %%a in (^^""$*%%~^^"^") do @( ^
+:: ^^^^ - constant
+::     ^^^^^^ constant.character.escape.dosbatch
+::           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - constant
+::                                         ^^ constant.character.escape.dosbatch
+::                                           ^^^^^^ - constant
+::                                                 ^^ constant.character.escape.dosbatch
+::                                                   ^^^ - constant
+::                                                      ^ constant.other.placeholder.dosbatch
+::                                                       ^^ constant.character.escape.dosbatch
+::                                                         ^ - constant
+::                                                          ^^ constant.character.escape.dosbatch
+::                                                            ^^^^^^^^^^^^ - constant
+::                                                                       ^ punctuation.separator.continuation.line.dosbatch
+
+   doskey for /f "delims=" %%p in ('"zoxide query --execute "%%CD%%\." -- "%%~1""')
+::        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function-call.arguments.dosbatch
+::                         ^^ constant.character.escape.dosbatch
+::                                                           ^^ constant.character.escape.dosbatch
+::                                                               ^^ constant.character.escape.dosbatch
+::                                                                         ^^ constant.character.escape.dosbatch
 
 :::: [ ECHO variables ] :::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -2311,6 +2388,14 @@ put arg1 arg2
    set ^=
 ::     ^^ invalid.illegal.parameter.dosbatch
 
+   set 12>nul
+::     ^^ variable.other.readwrite.dosbatch
+::     ^^ - meta.redirection
+::       ^^^^ meta.redirection.dosbatch
+::           ^ - meta.redirection
+::       ^ keyword.operator.assignment.redirection.dosbatch
+::        ^^^ constant.language.null.dosbatch
+
    set foo_bar & echo %foo_bar%
 :: ^^^^^^^^^^^ meta.command.set.dosbatch
 ::            ^ - meta.command
@@ -2763,6 +2848,16 @@ put arg1 arg2
 ::     ^^^^^^^ variable.other.readwrite
 ::            ^ keyword.operator.assignment - meta.expression.dosbatch
 ::              ^^^ string.unquoted
+
+   set abc /a = 1+2>nul
+:: ^^^ support.function.builtin.dosbatch
+::     ^^^^^^^ variable.other.readwrite
+::            ^ keyword.operator.assignment - meta.expression.dosbatch
+::              ^^^ string.unquoted
+::              ^^^ - meta.redirection
+::                 ^^^^ meta.redirection.dosbatch
+::                 ^ keyword.operator.assignment.redirection.dosbatch
+::                  ^^^ constant.language.null.dosbatch
 
    set /A hello_world
 :: ^^^ support.function.builtin.dosbatch

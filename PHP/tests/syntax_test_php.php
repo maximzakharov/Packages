@@ -3688,6 +3688,49 @@ $a = $b ? $c ? foo : bar : baz;
 //                 ^ keyword.operator.ternary.php
 //                       ^ keyword.operator.ternary.php
 
+$a = ($b ? fn () => 1 : 2);
+//   ^^^^^^^^^^^^^^^^^^^^^ meta.group.php
+//         ^^^ meta.function.anonymous.php
+//            ^^ meta.function.anonymous.parameters.php meta.group.php
+//              ^^^^^^ meta.function.anonymous.php
+//                    ^^^^ - meta.function
+//   ^ punctuation.section.group.begin.php
+//    ^^ variable.other.php
+//       ^ keyword.operator.ternary.php
+//         ^^ keyword.declaration.function.php
+//            ^ punctuation.section.group.begin.php
+//             ^ punctuation.section.group.end.php
+//               ^^ keyword.declaration.function.arrow.php
+//                  ^ meta.number.integer.decimal.php constant.numeric.value.php
+//                    ^ keyword.operator.ternary.php
+//                      ^ constant.numeric.value.php
+//                       ^ punctuation.section.group.end.php
+//                        ^ punctuation.terminator.statement.php
+
+$a = ($b ? fn ($c) => $c ? 1 : 2 : 3);
+//   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.group.php
+//         ^^^ meta.function.anonymous.php
+//            ^^^^ meta.function.anonymous.parameters.php meta.group.php
+//                ^^^^^^^^^^^^^^^ meta.function.anonymous.php
+//                               ^^^^^ - meta.function
+//   ^ punctuation.section.group.begin.php
+//    ^^ variable.other.php
+//       ^ keyword.operator.ternary.php
+//         ^^ keyword.declaration.function.php
+//            ^ punctuation.section.group.begin.php
+//             ^^ variable.parameter.php
+//               ^ punctuation.section.group.end.php
+//                 ^^ keyword.declaration.function.arrow.php
+//                    ^^ variable.other.php
+//                       ^ keyword.operator.ternary.php
+//                         ^ meta.number.integer.decimal.php constant.numeric.value.php
+//                           ^ keyword.operator.ternary.php
+//                             ^ meta.number.integer.decimal.php constant.numeric.value.php
+//                               ^ keyword.operator.ternary.php
+//                                 ^ constant.numeric.value.php
+//                                  ^ punctuation.section.group.end.php
+//                                   ^ punctuation.terminator.statement.php
+
 /******************************************************************************
  * Qualified Identifier and Member Access Tests
  *****************************************************************************/
@@ -5819,6 +5862,38 @@ h1 {
 }
 // <- text.html.php source.css.embedded punctuation.section.block.end.css
 
+@counter-style <?php $counter; ?> {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.at-rule.counter-style.css - meta.block
+//                                ^^ meta.at-rule.counter-style.css meta.property-list.css meta.block.css
+//^^^^^^^^^^^^ keyword.control.directive.css - punctuation
+//             ^^^^^^^^^^^^^^^^^^ entity.other.counter-style-name.css meta.embedded.php
+//             ^^^^^ punctuation.section.embedded.begin.php
+//                  ^^^^^^^^^^^ source.php.embedded.css
+//                             ^^ punctuation.section.embedded.end.php
+
+@counter-style my-<?php $counter; ?> {}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.at-rule.counter-style.css - meta.block
+//                                   ^^ meta.at-rule.counter-style.css meta.property-list.css meta.block.css
+//^^^^^^^^^^^^ keyword.control.directive.css - punctuation
+//             ^^^ entity.other.counter-style-name.css - meta.embedded
+//                ^^^^^^^^^^^^^^^^^^ entity.other.counter-style-name.css meta.embedded.php
+//                ^^^^^ punctuation.section.embedded.begin.php
+//                     ^^^^^^^^^^^ source.php.embedded.css
+//                                ^^ punctuation.section.embedded.end.php
+
+.my-<?php echo $class;?>-name:my-<?php echo $class;?>-class { my-<?php echo $class;?>-name: black }
+// <- meta.selector.css entity.other.attribute-name.class.css punctuation.definition.entity.css
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.css.embedded.html meta.selector.css
+//                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.css.embedded.html meta.property-list.css meta.block.css
+//^^ entity.other.attribute-name.class.css - meta.embedded.php
+//  ^^^^^^^^^^^^^^^^^^^^ entity.other.attribute-name.class.css meta.embedded.php
+//                      ^^^^^ entity.other.attribute-name.class.css - meta.embedded.php
+//                           ^ punctuation.definition.pseudo-class.css
+//                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ entity.other.pseudo-class.css
+//                                                          ^ punctuation.section.block.begin.css
+//                                                            ^^^ meta.property-name.css support.type.property-name.css - meta.embedded
+//                                                               ^^^^^^^^^^^^^^^^^^^^ meta.property-name.css support.type.property-name.css meta.embedded.php
+//                                                                                   ^^^^^ meta.property-name.css support.type.property-name.css - meta.embedded
 </style>
 
 <p style="color: <?php echo "red" ?>">text</p>

@@ -1,9 +1,9 @@
 %YAML 1.2
 ---
 ###############################################################################
-# This intermediate syntax is used by `HTML (JSP).sublime-syntax`
+# This intermediate syntax is used by `HTML (ASP).sublime-syntax`
 #
-# It powers Java highlighting within JSP tags in embedded JavaScript.
+# It powers VBScript highlighting within ASP tags in embedded JavaScript.
 #
 #   <script>
 #     <%! ... %>
@@ -11,11 +11,11 @@
 #     <%  ... %>
 #   </script>
 #
-# The primary task is to add `jsp-embedded` context to JavaScript's
+# The primary task is to add `asp-tags` context to JavaScript's
 # prototype to match all the <% %> tags.
 ###############################################################################
 
-scope: source.js.embedded.jsp
+scope: source.js.embedded.asp
 version: 2
 hidden: true
 
@@ -25,8 +25,8 @@ contexts:
 
   prototype:
     - meta_prepend: true
-    - include: HTML (JSP).sublime-syntax#jsp-embedded
+    - include: HTML (ASP).sublime-syntax#asp-tags
 
   string-content:
     - meta_prepend: true
-    - include: HTML (JSP).sublime-syntax#jsp-interpolations
+    - include: HTML (ASP).sublime-syntax#asp-interpolations

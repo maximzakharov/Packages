@@ -46,7 +46,7 @@ variables:
       (?:=>|:)
     )
 
-  modifier: (?:(?:static|readonly|private|public|protected|abstract|declare|override){{identifier_break}})
+  modifier: (?:(?:static|readonly|private|public|protected|abstract|declare|override|accessor){{identifier_break}})
 
 contexts:
   main:
@@ -564,6 +564,10 @@ contexts:
     - include: else-pop
 
   ts-type-parameter-list-head:
+    - match: const{{identifier_break}}
+      scope: storage.modifier.const.js
+    - match: (?:in|out){{identifier_break}}
+      scope: storage.modifier.variance.js
     - match: '{{identifier_name}}'
       scope: variable.parameter.generic.js
       set:
@@ -600,14 +604,8 @@ contexts:
 
   function-parameter-binding-list:
     - meta_prepend: true
-
     - include: decorator
-
     - include: function-parameter-modifiers
-
-    - match: this{{identifier_break}}
-      scope: variable.language.this.js
-      push: ts-type-annotation
 
   function-parameter-modifiers:
     - match: (?={{modifier}})
@@ -624,6 +622,12 @@ contexts:
           pop: 1
         - match: (?=\S)
           fail: function-parameter-modifier
+
+  function-parameter-binding-pattern:
+    - meta_prepend: true
+    - match: this{{identifier_break}}
+      scope: variable.language.this.js
+      pop: 1
 
   class-field:
     - meta_include_prototype: false
@@ -703,6 +707,11 @@ contexts:
     - match: \>
       scope: punctuation.definition.assertion.end.js
       pop: 1
+    - match: (?=\S) # Cover ts-type-parameter-list-head
+      push:
+        - ts-type-expression-end
+        - ts-type-expression-end-no-line-terminator
+        - ts-type-expression-begin
 
   ts-old-type-assertion-check:
     - match: (?=\()
@@ -728,6 +737,14 @@ contexts:
             - ts-type-expression-end
             - ts-type-expression-end-no-line-terminator
             - ts-type-expression-begin
+
+    - match: satisfies{{identifier_break}}
+      scope: keyword.operator.type.js
+      push:
+        - ts-type-meta
+        - ts-type-expression-end
+        - ts-type-expression-end-no-line-terminator
+        - ts-type-expression-begin
 
   ts-type-annotation:
     - match: ':'
@@ -1035,15 +1052,7 @@ contexts:
     - match: \)
       scope: punctuation.section.group.end.js
       pop: 1
-    - match: \.\.\.
-      scope: keyword.operator.spread.js
-    - match: '{{identifier_name}}'
-      scope: variable.parameter.js
-      push:
-        - ts-type-annotation
-        - ts-type-annotation-optional
-    - include: comma-separator
-    - include: else-pop
+    - include: function-parameter-binding-list
 
   ts-type-function-body:
     - include: ts-type-function-arrow

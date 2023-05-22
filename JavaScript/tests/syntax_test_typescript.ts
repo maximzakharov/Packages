@@ -409,6 +409,10 @@ import foo;
 //               ^^^^^^^^ meta.function
 //               ^^^ entity.name.function
 
+        accessor foo;
+//      ^^^^^^^^ storage.modifier
+//               ^^^ variable.other.readwrite
+
         readonly;
 //      ^^^^^^^^ variable.other.readwrite
 
@@ -640,6 +644,12 @@ function f<T, U>() {}
 //          ^ punctuation.separator.comma
 //            ^ variable.parameter.generic
 
+function f<const T>() {}
+//^^^^^^^^^^^^^^^^^^^^^^ meta.function
+//        ^^^^^^^^^ meta.generic
+//         ^^^^^ storage.modifier.const
+//               ^ variable.parameter.generic
+
 function f(x): x is any {};
 //^^^^^^^^^^^^^^^^^^^^^^^^ meta.function
 //           ^ punctuation.separator.type
@@ -715,6 +725,10 @@ function f(this : any) {}
 x as boolean;
 //^^ keyword.operator.type
 //   ^^^^^^^ meta.type support.type.primitive.boolean
+
+x satisfies boolean;
+//^^^^^^^^^ keyword.operator.type
+//          ^^^^^^^ meta.type support.type.primitive.boolean
 
 x as const;
 //^^ keyword.operator.type
@@ -1082,13 +1096,39 @@ let x: ( foo ? : any ) => bar;
 //                     ^^ keyword.declaration.function
 //                        ^^^ support.class
 
-let x: ( ... foo : any ) => any;
-//     ^^^^^^^^^^^^^^^^^^^^^^^^ meta.type
-//     ^^^^^^^^^^^^^^^^^ meta.group
+let x: ( ... foo ? : any ) => any;
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.type
+//     ^^^^^^^^^^^^^^^^^^^ meta.group
 //       ^^^ keyword.operator.spread
 //           ^^^ variable.parameter
-//               ^ punctuation.separator.type
-//                 ^^^ support.type.any
+//               ^ storage.modifier.optional
+//                 ^ punctuation.separator.type
+//                   ^^^ support.type.any
+
+let x: ({ foo }: any) => any;
+//    ^^^^^^^^^^^^^^^^^^^^^^ meta.type
+//     ^^^^^^^^^^^^^^ meta.group
+//     ^ punctuation.section.group.begin
+//      ^^^^^^^ meta.binding.destructuring.mapping
+//      ^ punctuation.section.mapping.begin
+//        ^^^ meta.mapping.key meta.binding.name variable.parameter.function
+//            ^ punctuation.section.mapping.end
+//             ^ punctuation.separator.type
+//               ^^^ support.type.any
+//                  ^ punctuation.section.group.end
+//                    ^^ keyword.declaration.function
+//                       ^^^ support.type.any
+//                          ^ punctuation.terminator.statement
+
+let x: (this: any) => any;
+//    ^^^^^^^^^^^^^^^^^^^ meta.type
+//     ^^^^^^^^^^^ meta.group
+//      ^^^^ variable.language.this
+//          ^ punctuation.separator.type
+//            ^^^ support.type.any
+//                 ^^ keyword.declaration.function
+//                    ^^^ support.type.any
+//                       ^ punctuation.terminator.statement
 
 let x: < T > ( ... foo : any ) => any;
 //     ^^^^^ meta.generic
@@ -1225,6 +1265,14 @@ const f = <T,>(): U => {};
 //                ^ support.class
 //                  ^^ keyword.declaration.function.arrow
 
+const f = <T, U = V<any>>() => {};
+//        ^^^^^^^^^^^^^^^^^^^^^^^ meta.function
+//        ^^^^^^^^^^^^^^^ meta.generic
+//                       ^^ meta.function.parameters
+//                         ^^^^^^ meta.function
+//                          ^^ keyword.declaration.function.arrow
+//                             ^^ meta.block
+
     a != b;
 //    ^^ keyword.operator.comparison
 
@@ -1324,3 +1372,21 @@ const f = (x): (y) => 42 => z;
 //                       ^^ keyword.declaration.function.arrow
 //                          ^ meta.block variable.other.readwrite
 //                           ^ punctuation.terminator.statement
+
+try {} catch (e: any) {}
+//     ^^^^^^^^^^^^^^^^^ meta.catch
+//     ^^^^^ keyword.control.exception.catch
+//           ^^^^^^^^ meta.group
+//            ^ variable.other.readwrite
+//             ^ punctuation.separator.type
+//              ^^^^ meta.type
+//               ^^^ support.type.any
+//                    ^^ meta.block
+
+type T<in out U> = V;
+//    ^^^^^^^^^^ meta.generic
+//    ^ punctuation.definition.generic.begin
+//     ^^ storage.modifier.variance
+//        ^^^ storage.modifier.variance
+//            ^ variable.parameter.generic
+//             ^ punctuation.definition.generic.end

@@ -1052,6 +1052,11 @@ this must not be bold italic***
 |      ^^^ - entity.name.section
 |       ^^ punctuation.definition.heading.end.markdown
 
+# Headding <u>with</u> tag
+| <- markup.heading.1.markdown punctuation.definition.heading.begin.markdown
+|^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.heading.1.markdown
+|          ^^^ meta.tag
+|                 ^^^^ meta.tag
 
 # TEST: SETEXT HEADINGS #######################################################
 
@@ -2022,6 +2027,23 @@ declare type foo = 'bar'
 ```
 | <- meta.code-fence.definition.end.xml.markdown-gfm punctuation.definition.raw.code-fence.end.markdown
 |^^ meta.code-fence.definition.end.xml.markdown-gfm punctuation.definition.raw.code-fence.end.markdown
+
+```jsx:file.jsx
+|^^^^^^^^^^^^^^^ meta.code-fence.definition.begin.jsx.markdown-gfm
+|^^ punctuation.definition.raw.code-fence.begin.markdown
+|  ^^^ constant.other.language-name.markdown
+|     ^ - constant
+
+| <- markup.raw.code-fence.jsx.markdown-gfm source.jsx
+```
+
+```jldoctest; filter = r"Stacktrace:(\n \[[0-9]+\].*)*"
+| <- meta.code-fence.definition.begin.text.markdown-gfm punctuation.definition.raw.code-fence.begin.markdown
+|^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.code-fence.definition.begin.text.markdown-gfm
+|^^ punctuation.definition.raw.code-fence.begin.markdown
+|  ^^^^^^^^^ constant.other.language-name.markdown
+|           ^ - constant
+```
 
 ```R%&?! weired language name
 |^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.code-fence.definition.begin.text.markdown-gfm
@@ -5748,7 +5770,7 @@ blah*
 | ^ punctuation.definition.raw.begin.markdown
 |      ^ punctuation.definition.raw.end.markdown
 |        ^ - punctuation
-|          ^^^^^^^^^^^^^^^^^^^ meta.tag.inline.a.html 
+|          ^^^^^^^^^^^^^^^^^^^ meta.tag.inline.any.html 
 
 - list item
 
@@ -6018,7 +6040,7 @@ foo
 ## https://spec.commonmark.org/0.30/#example-344
 
 <a href="`">`
-| ^^^^^^^^^^ meta.tag.inline.a
+| ^^^^^^^^^^ meta.tag.inline.any
 |           ^^ - meta.tag - markup.raw - punctuation
 
 ## https://spec.commonmark.org/0.30/#example-345
