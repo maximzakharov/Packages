@@ -588,7 +588,7 @@ import static no.terminator
 import * ;
 // <- meta.import.java keyword.declaration.import.java
 //^^^^^ meta.import.java - meta.path
-//     ^ meta.import.java meta.path.java variable.language.wildcard.asterisk.java
+//     ^ meta.import.java meta.path.java constant.other.wildcard.asterisk.java
 //      ^^ - meta.import - meta.path
 //       ^ punctuation.terminator.java
 
@@ -598,7 +598,7 @@ import *. ;
 //     ^ meta.import.java meta.path.java
 //      ^ meta.import - meta.path
 //       ^^ - meta.import - meta.path
-//     ^ variable.language.wildcard.asterisk.java
+//     ^ constant.other.wildcard.asterisk.java
 //      ^ invalid.illegal.expect-semicolon.java
 //        ^ punctuation.terminator.java
 
@@ -608,7 +608,7 @@ import *.* ;
 //     ^ meta.import.java meta.path.java
 //      ^^ meta.import - meta.path
 //        ^^ - meta.import - meta.path
-//     ^ variable.language.wildcard.asterisk.java
+//     ^ constant.other.wildcard.asterisk.java
 //      ^^ invalid.illegal.expect-semicolon.java
 //         ^ punctuation.terminator.java
 
@@ -618,7 +618,7 @@ import *.a ;
 //     ^ meta.import.java meta.path.java
 //      ^^ meta.import - meta.path
 //        ^^ - meta.import - meta.path
-//     ^ variable.language.wildcard.asterisk.java
+//     ^ constant.other.wildcard.asterisk.java
 //      ^^ invalid.illegal.expect-semicolon.java
 //         ^ punctuation.terminator.java
 
@@ -631,7 +631,7 @@ import a . * . b ;
 //     ^ variable.namespace.java
 //      ^^^ - variable
 //       ^ punctuation.accessor.dot.java
-//         ^ variable.language.wildcard.asterisk.java
+//         ^ constant.other.wildcard.asterisk.java
 //          ^^^^ - variable
 //           ^ invalid.illegal.expect-semicolon.java
 //             ^ invalid.illegal.expect-semicolon.java
@@ -650,7 +650,7 @@ import a . b . * ;
 //          ^ - variable - punctuation
 //           ^ punctuation.accessor.dot.java - entity - variable
 //            ^ - variable - punctuation
-//             ^ variable.language.wildcard.asterisk.java
+//             ^ constant.other.wildcard.asterisk.java
 //               ^ punctuation.terminator.java
 
 import a.b.Class;
@@ -673,7 +673,7 @@ import a.b.Class.*;
 //        ^ punctuation.accessor.dot.java - entity - variable
 //         ^^^^^ support.class.java
 //              ^ punctuation.accessor.dot.java - entity - variable
-//               ^ variable.language.wildcard.asterisk.java
+//               ^ constant.other.wildcard.asterisk.java
 
 import a.b.Class.SubClass;
 //^^^^^ meta.import.java - meta.path
@@ -826,7 +826,7 @@ import static a.b.Class.*;
 //               ^ punctuation.accessor.dot.java
 //                ^^^^^ support.class.java
 //                     ^ punctuation.accessor.dot.java
-//                      ^ variable.language.wildcard.asterisk.java
+//                      ^ constant.other.wildcard.asterisk.java
 
 import static C.d.ced
 //^^^^^^^^^^^^ meta.import.java
@@ -1156,7 +1156,7 @@ class GenericTest<@Anno A extends @Anno com . @Anno Foo<A, @Anno com . @Anno Bar
 //                                                                                   ^^^^ variable.annotation.java
 //                                                                                        ^^^ support.class.java
 //                                                                                           ^ punctuation.definition.generic.begin.java
-//                                                                                            ^ variable.language.wildcard.java
+//                                                                                            ^ constant.other.wildcard.questionmark.java
 //                                                                                              ^^^^^ keyword.declaration.super.java
 //                                                                                                    ^^^ support.class.java
 //                                                                                                       ^ punctuation.definition.generic.end.java
@@ -1209,7 +1209,7 @@ class generictest<@anno a extends @anno com . @anno foo<a, @anno com . @anno bar
 //                                                                                   ^^^^ variable.annotation.java
 //                                                                                        ^^^ support.class.java
 //                                                                                           ^ punctuation.definition.generic.begin.java
-//                                                                                            ^ variable.language.wildcard.java
+//                                                                                            ^ constant.other.wildcard.questionmark.java
 //                                                                                              ^^^^^ keyword.declaration.super.java
 //                                                                                                    ^^^ support.class.java
 //                                                                                                       ^ punctuation.definition.generic.end.java
@@ -1244,7 +1244,7 @@ class GenericTest<A> extends Foo<? extends A> {}
 //                          ^ - entity - keyword - storage
 //                           ^^^ entity.other.inherited-class.java
 //                              ^ punctuation.definition.generic.begin.java
-//                               ^ variable.language.wildcard.java
+//                               ^ constant.other.wildcard.questionmark.java
 //                                 ^^^^^^^ storage.modifier.extends.java
 //                                         ^ support.class.java
 //                                          ^ punctuation.definition.generic.end.java
@@ -1281,7 +1281,7 @@ class GenericTest<A> extends @Anno com . @Anno Foo<@Anno ? extends @Anno SuperCl
 //                                                ^ punctuation.definition.generic.begin.java
 //                                                 ^ punctuation.definition.annotation.java
 //                                                  ^^^^ variable.annotation.java
-//                                                       ^ variable.language.wildcard.java
+//                                                       ^ constant.other.wildcard.questionmark.java
 //                                                         ^^^^^^^ storage.modifier.extends.java
 //                                                                 ^ punctuation.definition.annotation.java
 //                                                                  ^^^^ variable.annotation.java
@@ -1807,7 +1807,7 @@ public enum TokenKind<T> extends MyEnum, FooBaz<? super T<TT>> implements Foo, B
 //                                       ^^^^^^ entity.other.inherited-class.java
 //                                             ^ punctuation.definition.generic.begin.java
 //                                             ^^^^^^^^^^ meta.generic.java - meta.generic meta.generic
-//                                              ^ variable.language.wildcard.java
+//                                              ^ constant.other.wildcard.questionmark.java
 //                                                ^^^^^ keyword.declaration.super.java
 //                                                      ^ support.class.java
 //                                                       ^ punctuation.definition.generic.begin.java
@@ -1941,12 +1941,82 @@ public enum TokenKind<T> extends MyEnum, FooBaz<? super T<TT>> implements Foo, B
 //                                ^ punctuation.section.group.end.java
 //                                 ^ punctuation.separator.comma.java
 
-    integerToken {};
+    integerToken {},
 //  ^^^^^^^^^^^^ meta.constant.identifier.java entity.name.constant.java
 //              ^ meta.constant.identifier.java - constant
 //               ^ meta.constant.java meta.block.java punctuation.section.block.begin.java
 //                ^ meta.constant.java meta.block.java punctuation.section.block.end.java
-//                 ^ punctuation.terminator.java
+//                 ^ punctuation.separator.comma.java
+
+    BYTE (0x01, Byte.FOO, Byte.FOO, Byte[].FOO, byte.FOO, byte[].FOO) {},
+//  ^^^^^ meta.constant.identifier.java
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.constant.arguments.java meta.group.java
+//                                                                   ^^^ meta.constant.java
+//                                                                      ^ - meta.constant
+//  ^^^^ entity.name.constant.java
+//       ^ punctuation.section.group.begin.java
+//        ^^^^ meta.number.integer.hexadecimal.java
+//            ^ punctuation.separator.comma.java
+//              ^^^^ support.class.java
+//                  ^ punctuation.accessor.dot.java
+//                   ^^^ constant.other.java
+//                      ^ punctuation.separator.comma.java
+//                        ^^^^ support.class.java
+//                            ^ punctuation.accessor.dot.java
+//                             ^^^ constant.other.java
+//                                ^ punctuation.separator.comma.java
+//                                  ^^^^ support.class.java
+//                                      ^^ storage.modifier.array.java
+//                                        ^ punctuation.accessor.dot.java
+//                                         ^^^ constant.other.java
+//                                            ^ punctuation.separator.comma.java
+//                                              ^^^^ storage.type.primitive.java
+//                                                  ^ punctuation.accessor.dot.java
+//                                                   ^^^ invalid.illegal.unexpected-member.java
+//                                                      ^ punctuation.separator.comma.java
+//                                                        ^^^^ storage.type.primitive.java
+//                                                            ^^ storage.modifier.array.java
+//                                                              ^ punctuation.accessor.dot.java
+//                                                               ^^^ invalid.illegal.unexpected-member.java
+//                                                                  ^ punctuation.section.group.end.java
+//                                                                    ^ meta.block.java punctuation.section.block.begin.java
+//                                                                     ^ meta.block.java punctuation.section.block.end.java
+//                                                                      ^ punctuation.separator.comma.java
+
+    BYTE (0x01, Byte.FOO, Byte.class, Byte[].class, byte.class, byte[].class) {};
+//  ^^^^^ meta.constant.identifier.java
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.constant.arguments.java meta.group.java
+//                                                                           ^^^ meta.constant.java
+//                                                                              ^ - meta.constant
+//  ^^^^ entity.name.constant.java
+//       ^ punctuation.section.group.begin.java
+//        ^^^^ meta.number.integer.hexadecimal.java
+//            ^ punctuation.separator.comma.java
+//              ^^^^ support.class.java
+//                  ^ punctuation.accessor.dot.java
+//                   ^^^ constant.other.java
+//                      ^ punctuation.separator.comma.java
+//                        ^^^^ support.class.java
+//                            ^ punctuation.accessor.dot.java
+//                             ^^^^^ variable.language.class.java
+//                                  ^ punctuation.separator.comma.java
+//                                    ^^^^ support.class.java
+//                                        ^^ storage.modifier.array.java
+//                                          ^ punctuation.accessor.dot.java
+//                                           ^^^^^ variable.language.class.java
+//                                                ^ punctuation.separator.comma.java
+//                                                  ^^^^ storage.type.primitive.java
+//                                                      ^ punctuation.accessor.dot.java
+//                                                       ^^^^^ variable.language.class.java
+//                                                            ^ punctuation.separator.comma.java
+//                                                              ^^^^ storage.type.primitive.java
+//                                                                  ^^ storage.modifier.array.java
+//                                                                    ^ punctuation.accessor.dot.java
+//                                                                     ^^^^^ variable.language.class.java
+//                                                                          ^ punctuation.section.group.end.java
+//                                                                            ^ meta.block.java punctuation.section.block.begin.java
+//                                                                             ^ meta.block.java punctuation.section.block.end.java
+//                                                                              ^ punctuation.terminator.java
 
     int {}
 //  ^^^ storage.type.primitive.java
@@ -2623,6 +2693,22 @@ class FieldDeclarationTests {
 //     ^ meta.field.identifier.java
 //      ^ punctuation.terminator.java - meta.field
 
+  int.foo bar
+//^^^^^^^^ meta.field.type.java
+//        ^^^ meta.field.identifier.java
+//^^^ storage.type.primitive.java
+//   ^ invalid.illegal.unexpected-accessor.java
+//    ^^^ invalid.illegal.unexpected-member.java
+//        ^^^ variable.other.member.java
+
+  int.class foo
+//^^^^^^^^^^ meta.field.type.java
+//          ^^^ meta.field.identifier.java
+//^^^ storage.type.primitive.java
+//   ^ invalid.illegal.unexpected-accessor.java
+//    ^^^^^ invalid.illegal.unexpected-member.java
+//          ^^^ variable.other.member.java
+
   int[]
 //^^^^^^ - meta.field meta.field
 //^^^^^^ meta.field.type.java
@@ -2642,6 +2728,24 @@ class FieldDeclarationTests {
 //^^^ storage.type.primitive.java
 //   ^^ storage.modifier.array.java
 //      ^^^ variable.other.member.java
+
+  int[].foo bar
+//^^^^^^^^^^ meta.field.type.java
+//          ^^^ meta.field.identifier.java
+//^^^ storage.type.primitive.java
+//   ^^ storage.modifier.array.java
+//     ^ invalid.illegal.unexpected-accessor.java
+//      ^^^ invalid.illegal.unexpected-member.java
+//          ^^^ variable.other.member.java
+
+  int[].class foo
+//^^^^^^^^^^^^ meta.field.type.java
+//            ^^^ meta.field.identifier.java
+//^^^ storage.type.primitive.java
+//   ^^ storage.modifier.array.java
+//     ^ invalid.illegal.unexpected-accessor.java
+//      ^^^^^ invalid.illegal.unexpected-member.java
+//            ^^^ variable.other.member.java
 
   int foo[], []
 //^^^^^^^^^^^^^ - meta.field meta.field
@@ -4013,7 +4117,7 @@ class MethodDelcarationTests {
 //                    ^^^^^^^^^^^^^^^^^ entity.name.function.java
 //                                      ^^^^^^^^^^ support.class.java
 //                                                ^ punctuation.definition.generic.begin.java
-//                                                 ^ variable.language.wildcard.java
+//                                                 ^ constant.other.wildcard.questionmark.java
 //                                                   ^^^^^^^ storage.modifier.extends.java
 //                                                           ^ support.class.java
 //                                                            ^ punctuation.definition.generic.end.java
@@ -4040,7 +4144,7 @@ class MethodDelcarationTests {
 //                    ^^^^^^^ storage.modifier.extends.java
 //                            ^^^^^^^^^^ support.class.java
 //                                      ^ punctuation.definition.generic.begin.java
-//                                       ^ variable.language.wildcard.java
+//                                       ^ constant.other.wildcard.questionmark.java
 //                                         ^^^^^ keyword.declaration.super.java
 //                                               ^ support.class.java
 //                                                ^^ punctuation.definition.generic.end.java
@@ -4579,6 +4683,15 @@ class LocalVariableDeclarationTests {
 //      ^^^ constant.other.java
 //         ^ punctuation.terminator.java
 
+    int _;
+// ^ - meta.declaration
+//  ^^^^ meta.declaration.type.java
+//      ^ meta.declaration.identifier.java
+//       ^ - meta.declaration
+//  ^^^ storage.type.primitive.java
+//      ^ variable.language.anonymous.java
+//       ^ punctuation.terminator.java
+
     int foo, bar;
 // ^ - meta.declaration
 //  ^^^^ meta.declaration.type.java
@@ -4628,6 +4741,22 @@ class LocalVariableDeclarationTests {
 //                     ^^^^^ constant.other.java
 //                          ^ punctuation.terminator.java
 
+    int.foo bar
+//  ^^^^^^^^ meta.declaration.type.java
+//          ^^^ meta.declaration.identifier.java
+//  ^^^ storage.type.primitive.java
+//     ^ invalid.illegal.unexpected-accessor.java
+//      ^^^ invalid.illegal.unexpected-member.java
+//          ^^^ variable.other.java
+
+    int.class foo
+//  ^^^^^^^^^^ meta.declaration.type.java
+//            ^^^ meta.declaration.identifier.java
+//  ^^^ storage.type.primitive.java
+//     ^ invalid.illegal.unexpected-accessor.java
+//      ^^^^^ invalid.illegal.unexpected-member.java
+//            ^^^ variable.other.java
+
     int[]
 //  ^^^^^^ - meta.declaration
 //  ^^^ storage.type.primitive.java
@@ -4644,6 +4773,24 @@ class LocalVariableDeclarationTests {
 //  ^^^ storage.type.primitive.java
 //     ^^ storage.modifier.array.java
 //        ^^^ variable.other.java
+
+    int[].foo bar
+//  ^^^^^^^^^^ meta.declaration.type.java
+//            ^^^ meta.declaration.identifier.java
+//  ^^^ storage.type.primitive.java
+//     ^^ storage.modifier.array.java
+//       ^ invalid.illegal.unexpected-accessor.java
+//        ^^^ invalid.illegal.unexpected-member.java
+//            ^^^ variable.other.java
+
+    int[].class foo
+//  ^^^^^^^^^^^^ meta.declaration.type.java
+//              ^^^ meta.declaration.identifier.java
+//  ^^^ storage.type.primitive.java
+//     ^^ storage.modifier.array.java
+//       ^ invalid.illegal.unexpected-accessor.java
+//        ^^^^^ invalid.illegal.unexpected-member.java
+//              ^^^ variable.other.java
 
     int foo[], [] ;
 //  ^^^^ meta.declaration.type.java
@@ -5038,7 +5185,7 @@ class LocalVariableDeclarationTests {
 //                       ^ - meta.declaration
 //  ^^^^ support.class.java
 //      ^ punctuation.definition.generic.begin.java
-//       ^ variable.language.wildcard.java
+//       ^ constant.other.wildcard.questionmark.java
 //         ^^^^^^^ storage.modifier.extends.java
 //                 ^^^ invalid.illegal.unexpected-keyword.java
 //                    ^ punctuation.definition.generic.end.java
@@ -6112,6 +6259,21 @@ class SwitchExpressionsTests {
 //                            ^^^^^^^^^^^^^^^^^^^^^^^^ string.quoted.double.java
 //                                                    ^ punctuation.terminator.java
 
+       case Point(_) -> _;
+//     ^^^^^^^^^^^^^^^^ meta.statement.conditional.switch.java meta.block.java
+//                ^ variable.language.anonymous.java
+//                      ^ variable.language.anonymous.java
+
+       case Point(int x, _) -> _;
+//     ^^^^^^^^^^^^^^^^^^^^^^^ meta.statement.conditional.switch.java meta.block.java
+//                       ^ variable.language.anonymous.java
+//                             ^ variable.language.anonymous.java
+
+       case Point(int x, int _) -> _;
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.statement.conditional.switch.java meta.block.java
+//                           ^ variable.language.anonymous.java
+//                                 ^ variable.language.anonymous.java
+
        default        -> o.toString();
 //     ^^^^^^^^^^^^^^^^^ meta.statement.conditional.default.java
 //                      ^^^^^^^^^^^^^^^ - meta.statement.conditional.default
@@ -6669,6 +6831,12 @@ class ForStatementTests {
 //                                                                       ^ punctuation.section.group.end.java
 //                                                                        ^ punctuation.terminator.java
 
+   for (Order _ : orders) {}
+// ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.statement.loop.for.java
+//            ^ variable.language.anonymous.java
+//              ^ keyword.operator.assignment.java
+//                ^^^^^^ variable.other.java
+
   }
 //^ meta.class.java meta.block.java meta.function.java meta.block.java punctuation.section.block.end.java
 }
@@ -7137,6 +7305,10 @@ class TryStatementTests {
 //  ^^^^^^ meta.statement.exception.catch.java
 //  ^^^^^ keyword.control.exception.catch.java
 
+    catch (NumberFormatException _)
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.statement.exception.catch.java
+//                               ^ variable.language.anonymous.java
+
     catch (int e)
 //  ^^^^^^^^^^^^^^^ meta.statement.exception.catch.java
 //  ^^^^^ keyword.control.exception.catch.java
@@ -7363,6 +7535,18 @@ class TryStatementTests {
 //                      ^ punctuation.section.group.end.java
 //                        ^ punctuation.section.block.begin.java
 //                         ^ punctuation.section.block.end.java
+
+   try (var _ = ScopedContext.acquire()) {}
+// ^^^^ meta.statement.exception.try.java - meta.statement.exception.try meta.statement.exception.try
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.statement.exception.try.java meta.group.java - meta.statement.exception.try meta.statement.exception.try
+//                                      ^ meta.statement.exception.try.java - meta.statement.exception.try meta.statement.exception.try - meta.group
+//                                       ^^ meta.statement.exception.try.java meta.block.java
+//      ^^^ storage.type.variant.java
+//          ^ variable.language.anonymous.java
+//            ^ keyword.operator.assignment.java
+//              ^^^^^^^^^^^^^ support.class.java
+//                           ^ punctuation.accessor.dot.java
+//                            ^^^^^^^ variable.function.java
 
     try (Stream<String> lines = Files.lines(path)) {
 //  ^^^^ meta.statement.exception.try.java - meta.statement.exception.try meta.statement.exception.try
@@ -8275,7 +8459,7 @@ class InstanceCreationExpressionsTests {
 //                ^^ meta.group.java
 //      ^^^^^^^ support.class.java
 //             ^ punctuation.definition.generic.begin.java
-//              ^ variable.language.wildcard.java
+//              ^ constant.other.wildcard.questionmark.java
 //               ^ punctuation.definition.generic.end.java
 //                ^ punctuation.section.group.begin.java
 //                 ^ punctuation.section.group.end.java
@@ -8295,7 +8479,7 @@ class InstanceCreationExpressionsTests {
 //                   ^ punctuation.definition.generic.begin.java
 //                    ^ punctuation.definition.annotation.java
 //                     ^^^^ variable.annotation.java
-//                          ^ variable.language.wildcard.java
+//                          ^ constant.other.wildcard.questionmark.java
 //                           ^ punctuation.definition.generic.end.java
 //                            ^ punctuation.section.group.begin.java
 //                             ^ punctuation.section.group.end.java
@@ -8306,7 +8490,7 @@ class InstanceCreationExpressionsTests {
 //             ^^^^^^^^^^^^^^^^ meta.instantiation.java meta.generic.java
 //                             ^^ meta.instantiation.java meta.group.java
 //             ^ punctuation.definition.generic.begin.java
-//              ^ variable.language.wildcard.java
+//              ^ constant.other.wildcard.questionmark.java
 //                ^^^^^^^ storage.modifier.extends.java
 //                        ^^^^ support.class.java
 //                            ^ punctuation.definition.generic.end.java
@@ -8324,7 +8508,7 @@ class InstanceCreationExpressionsTests {
 //                   ^ punctuation.definition.generic.begin.java
 //                    ^ punctuation.definition.annotation.java
 //                     ^^^^ variable.annotation.java
-//                          ^ variable.language.wildcard.java
+//                          ^ constant.other.wildcard.questionmark.java
 //                            ^^^^^^^ storage.modifier.extends.java
 //                                    ^ punctuation.definition.annotation.java
 //                                     ^^^^ variable.annotation.java
@@ -8344,7 +8528,7 @@ class InstanceCreationExpressionsTests {
 //                   ^ punctuation.definition.generic.begin.java
 //                    ^ punctuation.definition.annotation.java
 //                     ^^^^ variable.annotation.java
-//                          ^ variable.language.wildcard.java
+//                          ^ constant.other.wildcard.questionmark.java
 //                            ^^^^^^^ storage.modifier.extends.java
 //                                    ^ punctuation.definition.annotation.java
 //                                     ^^^^ variable.annotation.java
@@ -8359,7 +8543,7 @@ class InstanceCreationExpressionsTests {
 //             ^^^^^^^^^^^^^^^^^^^^^^^^ meta.instantiation.java meta.generic.java
 //                                     ^^ meta.instantiation.java meta.group.java
 //             ^ punctuation.definition.generic.begin.java
-//              ^ variable.language.wildcard.java
+//              ^ constant.other.wildcard.questionmark.java
 //                ^^^^^^^ storage.modifier.extends.java
 //                        ^^^^ support.class.java
 //                            ^ punctuation.separator.comma.java
@@ -8374,7 +8558,7 @@ class InstanceCreationExpressionsTests {
 //             ^^^^^^^^^^^^^^ meta.instantiation.java meta.generic.java
 //                           ^^ meta.instantiation.java meta.group.java
 //             ^ punctuation.definition.generic.begin.java
-//              ^ variable.language.wildcard.java
+//              ^ constant.other.wildcard.questionmark.java
 //                ^^^^^ keyword.declaration.super.java
 //                      ^^^^ support.class.java
 //                          ^ punctuation.definition.generic.end.java
@@ -8474,7 +8658,7 @@ class InstanceCreationExpressionsTests {
 //  ^^^ keyword.other.storage.new.java
 //      ^^^^^^^^^ support.class.java
 //               ^ punctuation.definition.generic.begin.java
-//                ^ variable.language.wildcard.java
+//                ^ constant.other.wildcard.questionmark.java
 //                 ^ punctuation.definition.generic.end.java
 //                  ^ punctuation.section.brackets.begin.java
 //                   ^ punctuation.section.brackets.end.java
@@ -9184,6 +9368,38 @@ class TypeComparisonExpressionsTests {
 //   ^^^^ variable.annotation.java
     []
 //  ^^ storage.modifier.array.java
+
+    instanceof Point(_)
+//  ^^^^^^^^^^^^^^^^^^^ meta.instanceof.java
+//  ^^^^^^^^^^ keyword.other.storage.instanceof.java
+//                   ^ variable.language.anonymous.java
+
+    instanceof Point(int x, _)
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.instanceof.java
+//  ^^^^^^^^^^ keyword.other.storage.instanceof.java
+//                          ^ variable.language.anonymous.java
+
+    instanceof Point(int x, int _)
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.instanceof.java
+//  ^^^^^^^^^^ keyword.other.storage.instanceof.java
+//                              ^ variable.language.anonymous.java
+
+    instanceof Point _
+//  ^^^^^^^^^^^^^^^^^^ meta.instanceof.java
+//                   ^ variable.language.anonymous.java
+
+    instanceof ColoredPoint(Point(int x, int _), Color _)
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.instanceof.java
+//                                           ^ variable.language.anonymous.java
+//                                                     ^ variable.language.anonymous.java
+
+    /* not valid, but syntax is no linter */
+    instanceof _ ;
+//             ^ variable.language.anonymous.java
+
+    /* not valid, but syntax is no linter */
+    instanceof _(int x, int y)
+//             ^ variable.language.anonymous.java
   }
 //^ meta.class.java meta.block.java meta.function.java meta.block.java punctuation.section.block.end.java
 
@@ -9242,12 +9458,12 @@ class TypeComparisonExpressionsTests {
 //  ^^^^^^^^^^ keyword.other.storage.instanceof.java
 //             ^ support.class.java
 //              ^ punctuation.definition.generic.begin.java
-//               ^ variable.language.wildcard.java
+//               ^ constant.other.wildcard.questionmark.java
 //                ^ punctuation.definition.generic.end.java
 //                 ^ punctuation.accessor.dot.java
 //                  ^ support.class.java
 //                   ^ punctuation.definition.generic.begin.java
-//                    ^ variable.language.wildcard.java
+//                    ^ constant.other.wildcard.questionmark.java
 //                     ^ punctuation.definition.generic.end.java
   }
 //^ meta.class.java meta.block.java meta.function.java meta.block.java punctuation.section.block.end.java
@@ -9457,11 +9673,17 @@ class LambdasExpressionsTests {
      a -> { return 42; };
 //        ^^^^^^^^^^^^^^ meta.function.anonymous.java
 
-     (a, b) -> 42;
+     (a, b, _) -> 42;
 //    ^ variable.parameter.java
 //       ^ variable.parameter.java
-//          ^^ keyword.declaration.function.arrow.java
-//             ^^ meta.number.integer.decimal.java constant.numeric.value.java
+//          ^ variable.language.anonymous.java
+//             ^^ keyword.declaration.function.arrow.java
+//                ^^ meta.number.integer.decimal.java constant.numeric.value.java
+
+     (int a, int _) -> a + a;
+//   ^^^^^^^^^^^^^^ meta.function.anonymous.parameters.java meta.group.java
+//        ^ variable.parameter.java
+//               ^ variable.language.anonymous.java
 
      (int a, Foo<Integer>[] b) -> 42;
 //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.function.anonymous meta.function.anonymous
@@ -9689,12 +9911,23 @@ class LambdasExpressionsTests {
 //                                                      ^ punctuation.terminator.java
 
   Supplier<Foo> supplier = () -> true;
+//                         ^^ meta.function.anonymous.parameters.java meta.group.java
+//                           ^^^^^^^^ meta.function.anonymous.java
 //                       ^ keyword.operator.assignment.java
 //                         ^ punctuation.section.group.begin.java
 //                          ^ punctuation.section.group.end.java
 //                            ^^ keyword.declaration.function.arrow.java
 //                               ^^^^ constant.language.boolean.java
 //                                   ^ punctuation.terminator.java
+
+  Supplier<Foo> supplier = _ -> true;
+//                         ^ meta.function.anonymous.parameters.java
+//                          ^^^^^^^^ meta.function.anonymous.java
+//                       ^ keyword.operator.assignment.java
+//                         ^ variable.language.anonymous.java
+//                           ^^ keyword.declaration.function.arrow.java
+//                              ^^^^ constant.language.boolean.java
+//                                  ^ punctuation.terminator.java
 }
 
 

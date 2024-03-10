@@ -168,6 +168,28 @@
     </script>
     ' ^^^^^^^ meta.tag - source
 
+    <script type="application/ld+json">
+        {
+            <% key %>: <%.Site.Color%>,
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+        |   ^^^^^^^^^ meta.mapping.json meta.interpolation.asp
+        |            ^^ meta.mapping.json - meta.interpolation
+        |              ^^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.asp
+        |                             ^ meta.mapping.json - meta.interpolation
+
+            "<% key %>": "<%.Site.Color%>",
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+        |   ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.begin.json
+        |    ^^^^^^^^^ meta.mapping.key.json meta.interpolation.asp - string
+        |             ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.end.json
+        |              ^^ meta.mapping.json - meta.interpolation
+        |                ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.begin.json
+        |                 ^^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.asp - string
+        |                                ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.end.json
+        |                                 ^ meta.mapping.json - meta.interpolation
+        }
+    </script>
+
     <style>
 
 ' <- source.css.embedded.html
@@ -208,7 +230,7 @@
     '       ^^^^^^^^ source.asp.embedded.html variable.other.asp
     '               ^^ punctuation.section.embedded.end.asp
     '                  ^ punctuation.section.block.begin.css
-    '                    ^^^^^^^^^ meta.embedded.asp
+    '                    ^^^^^^^^^ meta.property-name.css support.type.property-name.css meta.embedded.asp
     '                             ^ punctuation.separator.key-value.css
     '                               ^^^^^^^^^^ meta.property-value.css meta.embedded.asp
     '                                         ^ punctuation.terminator.rule.css

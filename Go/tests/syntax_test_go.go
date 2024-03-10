@@ -3176,9 +3176,19 @@ by accident, but if necessary, such support could be sacrificed.
 
     []func(
 //    ^^^^ keyword.declaration.function.go
-        param typ
+        param typ,
 //      ^^^^^ variable.parameter.go
 //            ^^^ storage.type.go
+//               ^ punctuation.separator.go
+        param [][][]typ
+//      ^^^^^ variable.parameter.go
+//            ^ punctuation.section.brackets.begin.go
+//             ^ punctuation.section.brackets.end.go
+//              ^ punctuation.section.brackets.begin.go
+//               ^ punctuation.section.brackets.end.go
+//                ^ punctuation.section.brackets.begin.go
+//                 ^ punctuation.section.brackets.end.go
+//                  ^^^ storage.type.go
     ) typ ident
 //    ^^^ storage.type.go
 //        ^^^^^ variable.other.go
@@ -5455,12 +5465,21 @@ func template() {
     //                            ^ meta.interpolation.go variable.other.template.go punctuation.definition.variable.go
     //                             ^ meta.interpolation.go variable.other.template.go
     //                               ^ meta.interpolation.go keyword.operator.assignment.go
+    t = "{{index $array 0}}"
+    //   ^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^^ support.function.builtin.go
+    //           ^^^^^^ variable.other.template.go
+    //                  ^ meta.number.integer.decimal.go constant.numeric.value.go
     t = "{{slice x 1 2}}"
     //   ^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
     //     ^^^^^ support.function.builtin.go
     //           ^ - variable.function
     //             ^ constant.numeric.value.go
     //               ^ constant.numeric.value.go
+    t = "{{return . }}"
+    //   ^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^^^ variable.function.go
+    //            ^ variable.language.template.go
     t = "{{function .Param}}"
     //   ^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
     //     ^^^^^^^^ variable.function.go
@@ -5480,6 +5499,56 @@ func template() {
     //           ^^^^^^ variable.function.method.go
     //                  ^ punctuation.accessor.dot.go
     //                   ^^^^^ variable.other.member.go
+    t = "{{$foo = function .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^ keyword.operator.assignment.go
+    //            ^^^^^^^^ variable.function.go
+    //                     ^ punctuation.accessor.dot.go
+    //                      ^^^^^ variable.other.member.go
+    t = "{{$foo = .Method .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^ keyword.operator.assignment.go
+    //            ^ punctuation.accessor.dot.go
+    //             ^^^^^^ variable.function.method.go
+    //                    ^ punctuation.accessor.dot.go
+    //                     ^^^^^ variable.other.member.go
+    t = "{{$foo = .Site.Method .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^ keyword.operator.assignment.go
+    //            ^ punctuation.accessor.dot.go
+    //             ^^^^ variable.other.member.go
+    //                 ^ punctuation.accessor.dot.go
+    //                  ^^^^^^ variable.function.method.go
+    //                         ^ punctuation.accessor.dot.go
+    //                          ^^^^^ variable.other.member.go
+    t = "{{$foo := function .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^^ keyword.operator.assignment.go
+    //             ^^^^^^^^ variable.function.go
+    //                      ^ punctuation.accessor.dot.go
+    //                       ^^^^^ variable.other.member.go
+    t = "{{$foo := .Method .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^^ keyword.operator.assignment.go
+    //             ^ punctuation.accessor.dot.go
+    //              ^^^^^^ variable.function.method.go
+    //                     ^ punctuation.accessor.dot.go
+    //                      ^^^^^ variable.other.member.go
+    t = "{{$foo := .Site.Method .Param}}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //     ^^^^ variable.other.template.go
+    //          ^^ keyword.operator.assignment.go
+    //             ^ punctuation.accessor.dot.go
+    //              ^^^^ variable.other.member.go
+    //                  ^ punctuation.accessor.dot.go
+    //                   ^^^^^^ variable.function.method.go
+    //                          ^ punctuation.accessor.dot.go
+    //                           ^^^^^ variable.other.member.go
     t = "{{ if or (isset .Params "alt") (.Method .Params "caption") }} Caption {{ end }}"
     //   ^^^^^^^^^ meta.string.go meta.interpolation.go - meta.group
     //            ^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go meta.group.go
@@ -5499,6 +5568,56 @@ func template() {
     //                                                   ^^^^^^^^^ meta.string.go meta.string.go string.quoted.double.go
     //                                                            ^ punctuation.section.group.end.go
     //                                                              ^^ punctuation.section.interpolation.end.go
+    t = "{{ .Member | func }}"
+    //   ^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //      ^ punctuation.accessor.dot.go
+    //       ^^^^^^ variable.other.member.go
+    //              ^ keyword.operator.assignment.pipe.go
+    //                ^^^^ variable.function.go
+    t = "{{ $foo := .Member | func }}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //              ^ punctuation.accessor.dot.go
+    //               ^^^^^^ variable.other.member.go
+    //                      ^ keyword.operator.assignment.pipe.go
+    //                        ^^^^ variable.function.go
+    t = "{{ $foo = .Member | func }}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //             ^ punctuation.accessor.dot.go
+    //              ^^^^^^ variable.other.member.go
+    //                     ^ keyword.operator.assignment.pipe.go
+    //                       ^^^^ variable.function.go
+    t = "{{ $foo = (.Member | func) }}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //              ^ punctuation.accessor.dot.go
+    //               ^^^^^^ variable.other.member.go
+    //                      ^ keyword.operator.assignment.pipe.go
+    //                        ^^^^ variable.function.go
+    t = "{{ (printf "text/html" ($url | htmlEscape)) | safeHTML }}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //      ^^^^^^^^^^^^^^^^^^^^ source.go.template meta.group.go - meta.group meta.group
+    //                          ^^^^^^^^^^^^^^^^^^^ source.go.template meta.group.go meta.group.go
+    //                                             ^ source.go.template meta.group.go - meta.group meta.group
+    //                                              ^^^^^^^^^^^^ source.go.template - meta.group
+    //                                ^ keyword.operator.assignment.pipe.go
+    //                                  ^^^^^^^^^^ variable.function.go
+    //                                               ^ keyword.operator.assignment.pipe.go
+    //                                                 ^^^^^^^^ variable.function.go
+    t = "{{ (printf "text/html" ($url | .Site.htmlEscape)) | .Site.safeHTML }}"
+    //   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.go meta.interpolation.go
+    //      ^^^^^^^^^^^^^^^^^^^^ source.go.template meta.group.go - meta.group meta.group
+    //                          ^^^^^^^^^^^^^^^^^^^^^^^^^ source.go.template meta.group.go meta.group.go
+    //                                                   ^ source.go.template meta.group.go - meta.group meta.group
+    //                                                    ^^^^^^^^^^^^^^^^^^ source.go.template - meta.group
+    //                                ^ keyword.operator.assignment.pipe.go
+    //                                  ^ punctuation.accessor.dot.go
+    //                                   ^^^^ variable.other.member.go
+    //                                       ^ punctuation.accessor.dot.go
+    //                                        ^^^^^^^^^^ variable.function.method.go
+    //                                                     ^ keyword.operator.assignment.pipe.go
+    //                                                       ^ punctuation.accessor.dot.go
+    //                                                        ^^^^ variable.other.member.go
+    //                                                            ^ punctuation.accessor.dot.go
+    //                                                             ^^^^^^^^ variable.function.method.go
     t = "{{nil}} {{true}} {{false}}"
     //     ^^^ constant.language
     //             ^^^^ constant.language
@@ -5524,6 +5643,13 @@ func main() {
         // freebsd, openbsd,
         // plan9, windows...
         fmt.Printf("%s.\n", os)
+    }
+    switch os {
+    case no_colon_here_while_user_is_typing
+        ; a := b
+//      ^ punctuation.terminator
+//          ^ - punctuation.separator.case-statement
+//          ^^ keyword.operator.assignment
     }
 }
 
@@ -5631,10 +5757,14 @@ func lang_embedding() {
     //^^^^^^^^ meta.annotation.identifier.go support.other.go
     //        ^ meta.annotation.identifier.go keyword.operator.assignment.go
     //         ^^ meta.annotation.parameters.go constant.other.language-name.go
-    js_string := `var i = 0`
+    js_string := `var i = {{ $var }}`
     //           ^ meta.string.go string.quoted.backtick.go punctuation.definition.string.begin.go - source.js
-    //            ^^^^^^^^^ meta.string.go meta.embedded.go source.js.embedded.go - string.quoted.backtick
-    //                     ^ meta.string.go string.quoted.backtick.go punctuation.definition.string.end.go - source.js
+    //            ^^^^^^^^ meta.string.go meta.embedded.go source.js.embedded.go - meta.interpolation - string.quoted.backtick
+    //                    ^^^^^^^^^^ meta.string.go meta.embedded.go source.js.embedded.go meta.interpolation.go - string.quoted.backtick
+    //                              ^ meta.string.go string.quoted.backtick.go punctuation.definition.string.end.go - source.js
+    //                    ^^ punctuation.section.interpolation.begin.go
+    //                       ^^^^ variable.other.template.go
+    //                            ^^ punctuation.section.interpolation.end.go
 
     //language=sql prefix=foo suffix=bar
     // <- comment.line.double-slash.go punctuation.definition.comment.go
@@ -5723,4 +5853,41 @@ func lang_embedding() {
     //                                             ^ meta.string.xml string.quoted.double.xml
     //                                               ^^^^^^^^^^^ meta.interpolation.go
     //                                                             ^ meta.string.go string.quoted.backtick.go punctuation.definition.string.end.go
+}
+
+// language=sql
+some_func_call(
+    args_on_next_line, `
+        SELECT min(a)
+        FROM b
+        WHERE c = @p1`, "some value",
+    // ^^^^^^^^^^^^^^ meta.string.go meta.embedded.go source.sql.embedded.go
+)
+// <- punctuation.section.parens.end.go - invalid
+
+_ = ident[0] * ident
+//  ^^^^^ variable.other
+//       ^ punctuation.section.brackets.begin
+//        ^ meta.number.integer.decimal constant.numeric.value
+//         ^ punctuation.section.brackets.end
+//           ^ keyword.operator
+//             ^^^^^ variable.other
+func sth() {
+
+    a := 123
+    data := []int
+
+    b := 0
+    b = data[b]|a
+//             ^ keyword.operator.bitwise
+//              ^ variable.other
+    b = data[b]^a
+//             ^ keyword.operator.bitwise
+//              ^ variable.other
+    b = data[b]&a
+//             ^ keyword.operator
+//              ^ variable.other
+    b = b|a
+//       ^ keyword.operator.bitwise
+//        ^ variable.other
 }

@@ -22,7 +22,7 @@
 //         ^^ punctuation.section.embedded.begin.jsp
 //           ^^^^^^^^^^^^^^^^^ source.java.embedded.jsp
 //                            ^^ punctuation.section.embedded.end.jsp
-            color: <% print("<\%foo%\>"); %>;
+;           color: <% print("<\%foo%\>"); %>;
 //          ^^^^^ support.type.property-name.css
 //               ^ punctuation.separator.key-value.css
 //                 ^^^^^^^^^^^^^^^^^^^^^^^^^ meta.property-value.css meta.embedded.scriptlet.jsp
@@ -32,7 +32,7 @@
 //                           ^^^ constant.character.escape.jsp
 //                                 ^^^ constant.character.escape.jsp
 //                                        ^^ punctuation.section.embedded.end.jsp
-            font-family: "Helve<% print("tic")%>a";
+;           font-family: "Helve<% print("tic")%>a";
 //                       ^^^^^^ meta.string.css - meta.interpolation - meta.embedded
 //                             ^^^^^^^^^^^^^^^^^ meta.string.css meta.interpolation.jsp meta.embedded.scriptlet.jsp
 //                                              ^^ meta.string.css - meta.interpolation - meta.embedded
@@ -141,6 +141,28 @@
     // ^ meta.tag.sgml.cdata.html source.js.embedded.html
     //  ^^^ meta.tag.sgml.cdata.html punctuation.definition.tag.end.html
     //     ^ - meta.tag - punctuation - source
+    </script>
+
+    <script type="application/ld+json">
+        {
+            <%=key%>: <%=siteColor%>,
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+        |   ^^^^^^^^ meta.mapping.json meta.interpolation.jsp
+        |           ^^ meta.mapping.json - meta.interpolation
+        |             ^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.jsp
+        |                           ^ meta.mapping.json - meta.interpolation
+
+            "<%=key%>": "<%=siteColor%>",
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+        |   ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.begin.json
+        |    ^^^^^^^^ meta.mapping.key.json meta.interpolation.jsp - string
+        |            ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.end.json
+        |             ^^ meta.mapping.json - meta.interpolation
+        |               ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.begin.json
+        |                ^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.jsp - string
+        |                              ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.end.json
+        |                               ^ meta.mapping.json - meta.interpolation
+        }
     </script>
 
     <script type="text/html">

@@ -1382,6 +1382,22 @@ class B
 //   ^^^^^^^^^^^^^^^^^^ meta.class.php meta.block.php - meta.use
 //    ^ storage.modifier
 
+    public const STR_1
+//  ^^^^^^ storage.modifier
+//         ^^^^^ keyword.declaration.constant.php
+//               ^^^^^ entity.name.constant.php
+
+    public
+//  ^^^^^^ storage.modifier
+      const
+//    ^^^^^ keyword.declaration.constant.php
+      STR_1
+//    ^^^^^ entity.name.constant.php
+      =
+//    ^ keyword.operator.assignment.php
+      '';
+//    ^^ string.quoted.single.php
+
     public const STR_1 = '';
 //  ^^^^^^ storage.modifier
 //         ^^^^^ keyword.declaration.constant.php
@@ -1400,6 +1416,79 @@ class B
 //                     ^^^^^ entity.name.constant.php
 //                           ^ keyword.operator.assignment
 //                             ^^^^^ support.function.array.php
+
+    // typed class constants
+
+    private const int A
+//  ^^^^^^^ storage.modifier.access.php
+//          ^^^^^ keyword.declaration.constant.php
+//                ^^^ meta.type.php storage.type.primitive.php
+//                    ^ entity.name.constant.php
+
+    private const int A = 1;
+//  ^^^^^^^ storage.modifier.access.php
+//          ^^^^^ keyword.declaration.constant.php
+//                ^^^ meta.type.php storage.type.primitive.php
+//                    ^ entity.name.constant.php
+//                      ^ keyword.operator.assignment.php
+//                        ^ constant.numeric.value.php
+//                         ^ punctuation.terminator.statement.php
+
+    public const mixed B = 1;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^^^^ keyword.declaration.constant.php
+//               ^^^^^ meta.type.php storage.type.primitive.php
+//                     ^ entity.name.constant.php
+//                       ^ keyword.operator.assignment.php
+//                         ^ constant.numeric.value.php
+//                          ^ punctuation.terminator.statement.php
+
+    public
+//  ^^^^^^ storage.modifier.access.php
+      const
+//    ^^^^^ keyword.declaration.constant.php
+      mixed
+//    ^^^^^ meta.type.php storage.type.primitive.php
+      B
+//    ^ entity.name.constant.php
+      =
+//    ^ keyword.operator.assignment.php
+      1;
+//    ^ constant.numeric.value.php
+//     ^ punctuation.terminator.statement.php
+
+    public const Foo|Stringable|null D = null;
+//  ^^^^^^ storage.modifier.access.php
+//         ^^^^^ keyword.declaration.constant.php
+//               ^^^^^^^^^^^^^^^^^^^ meta.block.php meta.type.php
+//               ^^^ support.class.php
+//                  ^ punctuation.separator.type.union.php
+//                   ^^^^^^^^^^ support.class.builtin.php
+//                             ^ punctuation.separator.type.union.php
+//                              ^^^^ storage.type.primitive.php
+//                                   ^ entity.name.constant.php
+//                                     ^ keyword.operator.assignment.php
+//                                       ^^^^ constant.language.null.php
+//                                           ^ punctuation.terminator.statement.php
+
+    public
+//  ^^^^^^ storage.modifier.access.php
+      const
+//    ^^^^^ keyword.declaration.constant.php
+      Foo|Stringable|null
+//    ^^^^^^^^^^^^^^^^^^^ meta.block.php meta.type.php
+//    ^^^ support.class.php
+//       ^ punctuation.separator.type.union.php
+//        ^^^^^^^^^^ support.class.builtin.php
+//                  ^ punctuation.separator.type.union.php
+//                   ^^^^ storage.type.primitive.php
+      D
+//    ^ entity.name.constant.php
+      =
+//    ^ keyword.operator.assignment.php
+      null;
+//    ^^^^ constant.language.null.php
+//        ^ punctuation.terminator.statement.php
 
     public function __construct(
         public readonly int $val = 1
@@ -1943,6 +2032,26 @@ $array = array_reduce(
     $initial
 );
 // <- punctuation.section.group.end
+
+$array['callback'](first: 'first', second: 'second');
+// <- meta.function-call.identifier.php variable.other.php punctuation.definition.variable.php
+//^^^^ meta.function-call.identifier.php - meta.item-access
+//    ^^^^^^^^^^^^ meta.function-call.identifier.php meta.item-access.php
+//                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function-call.arguments.php meta.group.php
+//^^^^ variable.other.php
+//    ^ punctuation.section.brackets.begin.php
+//     ^^^^^^^^^^ meta.string.php string.quoted.single.php
+//               ^ punctuation.section.brackets.end.php
+//                ^ punctuation.section.group.begin.php
+//                 ^^^^^ variable.parameter.named.php
+//                      ^ keyword.operator.assignment.php
+//                        ^^^^^^^ meta.string.php string.quoted.single.php
+//                               ^ punctuation.separator.sequence.php
+//                                 ^^^^^^ variable.parameter.named.php
+//                                       ^ keyword.operator.assignment.php
+//                                         ^^^^^^^^ meta.string.php string.quoted.single.php
+//                                                 ^ punctuation.section.group.end.php
+//                                                  ^ punctuation.terminator.statement.php
 
 nested( static function ( {  } );
 //    ^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function-call.arguments.php meta.group.php
@@ -3282,18 +3391,19 @@ $test = new Test1;
 //          ^^^^^ support.class.php - meta.path
 //          ^ support.class.php
 
-$anon = new class{};
-//      ^^^^^^^^^^^ - meta.class meta.class
-//      ^^^^ meta.instantiation.php - meta.class
-//          ^^^^^ meta.instantiation.php meta.class.php - meta.block
-//               ^^ meta.instantiation.php meta.class.php meta.block.php
-//                 ^ - meta.instantiation - meta.class - meta.block
+$anon = new readonly class{};
+//      ^^^^^^^^^^^^^^^^^^^^ - meta.class meta.class
+//      ^^^^          meta.instantiation.php - meta.class
+//          ^^^^^^^^ meta.instantiation.php storage.modifier.php - meta.class
+//                   ^^^^^ meta.instantiation.php meta.class.php - meta.block
+//                        ^^ meta.instantiation.php meta.class.php meta.block.php
+//                          ^ - meta.instantiation - meta.class - meta.block
 //      ^ keyword.other.new.php
-//          ^ keyword.declaration.class
-//               ^^ meta.class.php
-//               ^^ meta.block.php
-//               ^ punctuation.section.block.begin.php
-//                ^ punctuation.section.block.end.php
+//                   ^ keyword.declaration.class
+//                        ^^ meta.class.php
+//                        ^^ meta.block.php
+//                        ^ punctuation.section.block.begin.php
+//                         ^ punctuation.section.block.end.php
 
 $anon = new class};
 //      ^^^^^^^^^^ - meta.class meta.class
@@ -5172,6 +5282,12 @@ $sql = "WITH RECURSION SELECT *";
 //      ^^^^^^^^^^^^^^^^^^^^^^^ meta.string.php source.sql.embedded.php
 //                             ^ meta.string.php string.quoted.double.php punctuation.definition.string.end.php
 
+$sql = "MERGE INTO ";
+//      ^^^^^^^^^^^ source.sql.embedded.php
+//                 ^ punctuation.definition.string.end.php
+$sql = "BEGIN ";
+//      ^^^^^^ source.sql.embedded.php
+//             ^ punctuation.terminator.statement.php
 
 /******************************************************************************
  * SQL String Tests without interpolation
@@ -5413,7 +5529,7 @@ echo <<<sql
 SELECT * FROM users WHERE first_name = 'John' LIMIT $limit
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql.embedded.php
 // <- keyword.other.DML
-//     ^ variable.language.wildcard.asterisk
+//     ^ constant.other.wildcard.asterisk
 //                                     ^^^^^^ string.quoted.single
 //                                                  ^^^^^^ variable.other.php
 sql;
@@ -5430,7 +5546,7 @@ echo <<<'SQL'
 SELECT * FROM users WHERE first_name = 'John'\n
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.sql source.sql.embedded.php
 // <- keyword.other.DML
-//     ^ variable.language.wildcard.asterisk
+//     ^ constant.other.wildcard.asterisk
 //                                     ^^^^^^ string.quoted.single
 //                                           ^^ - constant.character.escape.php
 SQL;
@@ -5811,6 +5927,28 @@ function embedHtml() {
 //  ^^ punctuation.section.embedded.end.php - source.php
 </script>
 
+ <script type="application/ld+json">
+     {
+         <? $key ?>: <? $SiteColor ?>,
+     |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+     |   ^^^^^^^^^^ meta.mapping.json meta.interpolation.php
+     |             ^^ meta.mapping.json - meta.interpolation
+     |               ^^^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.php
+     |                               ^ meta.mapping.json - meta.interpolation
+
+         "<? $key ?>": "<? $SiteColor ?>",
+     |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.json.embedded.html
+     |   ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.begin.json
+     |    ^^^^^^^^^^ meta.mapping.key.json meta.interpolation.php - string
+     |              ^ meta.mapping.key.json string.quoted.double.json punctuation.definition.string.end.json
+     |               ^^ meta.mapping.json - meta.interpolation
+     |                 ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.begin.json
+     |                  ^^^^^^^^^^^^^^^^ meta.mapping.value.json meta.interpolation.php - string
+     |                                  ^ meta.mapping.value.json meta.string.json string.quoted.double.json punctuation.definition.string.end.json
+     |                                   ^ meta.mapping.json - meta.interpolation
+     }
+ </script>
+
 <style>
 h1 {
     font-family: Arial;
@@ -5831,7 +5969,7 @@ h1 {
 //                            ^ punctuation.section.block.begin.php
 //                              ^^ punctuation.section.embedded.end.php
 
-        font-size: 2em;
+;       font-size: 2em;
 //     ^^^^^^^^^^^^^^^^^ text.html.php source.css.embedded
 //      ^^^^^^^^^ support.type.property-name
 //                 ^ constant.numeric
@@ -5846,7 +5984,7 @@ h1 {
 //            ^ punctuation.section.block.begin.php
 //              ^^ punctuation.section.embedded.end.php
 
-        font-size: 3em;
+;       font-size: 3em;
 //     ^^^^^^^^^^^^^^^^^ text.html.php source.css.embedded
 //      ^^^^^^^^^ support.type.property-name
 //                 ^ constant.numeric
@@ -5881,6 +6019,27 @@ h1 {
 //                     ^^^^^^^^^^^ source.php.embedded.css
 //                                ^^ punctuation.section.embedded.end.php
 
+   .<? $selector ?> { <? $attr ?>: <? $value ?>; }
+// ^^^^^^^^^^^^^^^^ source.css.embedded.html - meta.property-list - meta.block
+//                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.css.embedded.html meta.property-list.css meta.block.css
+// ^ meta.selector.css entity.other.attribute-name.class.css punctuation.definition.entity.css
+//  ^^^^^^^^^^^^^^^ meta.selector.css entity.other.attribute-name.class.css meta.embedded.php
+//  ^^ punctuation.section.embedded.begin.php
+//    ^^^^^^^^^^^ source.php.embedded.css
+//               ^^ punctuation.section.embedded.end.php
+//                  ^ punctuation.section.block.begin.css
+//                    ^^^^^^^^^^^ meta.property-name.css support.type.property-name.css meta.embedded.php
+//                    ^^ punctuation.section.embedded.begin.php
+//                      ^^^^^^^ source.php.embedded.css
+//                             ^^ punctuation.section.embedded.end.php
+//                               ^ punctuation.separator.key-value.css
+//                                 ^^^^^^^^^^^^ meta.property-value.css meta.embedded.php
+//                                 ^^ punctuation.section.embedded.begin.php
+//                                   ^^^^^^^^ source.php.embedded.css
+//                                           ^^ punctuation.section.embedded.end.php
+//                                             ^ punctuation.terminator.rule.css
+//                                               ^ punctuation.section.block.end.css
+
 .my-<?php echo $class;?>-name:my-<?php echo $class;?>-class { my-<?php echo $class;?>-name: black }
 // <- meta.selector.css entity.other.attribute-name.class.css punctuation.definition.entity.css
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.css.embedded.html meta.selector.css
@@ -5912,12 +6071,12 @@ h1 {
 
 <p onclick="foo(<?php echo "red" ?>)">text</p>
 //         ^ meta.attribute-with-value.event.html meta.string.html string.quoted.double.html punctuation.definition.string.begin.html - meta.interpolation
-//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call.js
+//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call
 //                                  ^ meta.attribute-with-value.event.html meta.string.html string.quoted.double.html punctuation.definition.string.end.html - meta.interpolation
 
 <p onclick='foo(<?php echo 'red' ?>)'>text</p>
 //         ^ meta.attribute-with-value.event.html meta.string.html string.quoted.single.html punctuation.definition.string.begin.html - meta.interpolation
-//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call.js
+//          ^^^^^^^^^^^^^^^^^^^^^^^^ meta.attribute-with-value.event.html meta.string.html meta.interpolation.html source.js.embedded.html meta.function-call
 //                                  ^ meta.attribute-with-value.event.html meta.string.html string.quoted.single.html punctuation.definition.string.end.html - meta.interpolation
 
 <![CDATA[Text with <? $php ?> interpolation.]]>
