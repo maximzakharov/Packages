@@ -1,0 +1,36 @@
+%YAML 1.2
+---
+name: Make Output
+hidden: true
+scope: source.build_output
+contexts:
+  main:
+    - match: '^(..[^:\n]*):([0-9]+):?([0-9]+)?:? '
+      scope: entity.name.filename
+    - match: '.*done$'
+      scope: message.done
+    - match: 'error: .*'
+      scope: message.error
+    - match: 'warning: .*'
+      scope: message.warning
+    - match: '\b(note): '
+      scope: message.note
+    - match: '^Checking.*'
+      scope: message.checking
+    - match: '^\[.+\]$'
+      scope: comment
+    - match: '^.*:PASS.*$'
+      scope: test_passed
+    - match: '^.*:FAIL.*$'
+      scope: test_failed
+    - match: '^(?!100%).* tests passed.*'
+      scope: tests_failed
+    - match: '^.*100%\s*tests\s*passed.*$'
+      scope: tests_ok
+
+      
+
+
+
+      
+
